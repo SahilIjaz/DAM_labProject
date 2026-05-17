@@ -1,106 +1,93 @@
-import { executeQuery } from '../db/mysql';
-import { Course, Enrollment } from '../types';
+import { executeQuery, callProcedure } from '../db/mysql';
+import { Course } from '../types';
 
-export async function getCourses(
-  limit: number = 50,
-  offset: number = 0
-): Promise<Course[]> {
-  const query = `
-    SELECT c.*, COUNT(e.enrollment_id) as enrollment_count
-    FROM courses c
-    LEFT JOIN enrollments e ON c.course_id = e.course_id AND e.status = 'enrolled'
-    GROUP BY c.course_id
-    LIMIT ? OFFSET ?
-  `;
-  return executeQuery<Course>(query, [limit, offset]);
+export async function getCourses(departmentId?: number): Promise<Course[]> {
+  if (departmentId) {
+    const query = `SELECT * FROM courses WHERE department_id = ? ORDER BY course_code`;
+    return executeQuery<Course>(query, [departmentId]);
+  }
+  const query = `SELECT * FROM courses ORDER BY course_code`;
+  return executeQuery<Course>(query, []);
 }
 
 export async function getCourseById(courseId: number): Promise<Course | null> {
-  const query = `
-    SELECT c.*, COUNT(e.enrollment_id) as enrollment_count
-    FROM courses c
-    LEFT JOIN enrollments e ON c.course_id = e.course_id AND e.status = 'enrolled'
-    WHERE c.course_id = ?
-    GROUP BY c.course_id
-  `;
+  const query = `SELECT * FROM courses WHERE course_id = ?`;
   const results = await executeQuery<Course>(query, [courseId]);
   return results[0] || null;
 }
 
-export async function getCoursesByDepartment(
-  departmentId: number
-): Promise<Course[]> {
+export async function createCourse(
+  courseCode: string,
+  courseName: string,
+  departmentId: number,
+  creditHours: number,
+  capacity: number,
+  semester: number
+): Promise<{ course_id: number; status: string }> {
   const query = `
-    SELECT c.*, COUNT(e.enrollment_id) as enrollment_count
-    FROM courses c
-    LEFT JOIN enrollments e ON c.course_id = e.course_id AND e.status = 'enrolled'
-    WHERE c.department_id = ?
-    GROUP BY c.course_id
+    INSERT INTO courses (course_code, course_name, department_id, credit_hours, capacity, semester)
+    VALUES (?, ?, ?, ?, ?, ?)
   `;
-  return executeQuery<Course>(query, [departmentId]);
+  const result = await executeQuery(query, [courseCode, courseName, departmentId, creditHours, capacity, semester]);
+  return {
+    course_id: (result as any).insertId,
+    status: 'created',
+  };
 }
 
-export async function getCoursesByFaculty(facultyId: number): Promise<Course[]> {
-  const query = `
-    SELECT c.*, COUNT(e.enrollment_id) as enrollment_count
-    FROM courses c
-    LEFT JOIN enrollments e ON c.course_id = e.course_id AND e.status = 'enrolled'
-    WHERE c.faculty_id = ?
-    GROUP BY c.course_id
-  `;
-  return executeQuery<Course>(query, [facultyId]);
-}
+export async function updateCourse(
+  courseId: number,
+  courseName?: string,
+  capacity?: number,
+  creditHours?: number
+): Promise<void> {
+  let query = `UPDATE courses SET `;
+  const params: any[] = [];
+  const updates: string[] = [];
 
-export async function getCourseEnrollments(courseId: number): Promise<Enrollment[]> {
-  const query = `
-    SELECT * FROM enrollments
-    WHERE course_id = ? AND status = 'enrolled'
-  `;
-  return executeQuery<Enrollment>(query, [courseId]);
-}
-
-export async function getCourseBySemester(
-  semester: number,
-  departmentId?: number
-): Promise<Course[]> {
-  let query = `
-    SELECT c.*, COUNT(e.enrollment_id) as enrollment_count
-    FROM courses c
-    LEFT JOIN enrollments e ON c.course_id = e.course_id AND e.status = 'enrolled'
-    WHERE c.semester = ?
-  `;
-  const params: any[] = [semester];
-
-  if (departmentId) {
-    query += ` AND c.department_id = ?`;
-    params.push(departmentId);
+  if (courseName) {
+    updates.push(`course_name = ?`);
+    params.push(courseName);
+  }
+  if (capacity !== undefined) {
+    updates.push(`capacity = ?`);
+    params.push(capacity);
+  }
+  if (creditHours !== undefined) {
+    updates.push(`credit_hours = ?`);
+    params.push(creditHours);
   }
 
-  query += ` GROUP BY c.course_id`;
+  if (updates.length === 0) return;
 
-  return executeQuery<Course>(query, params);
+  query += updates.join(', ') + ` WHERE course_id = ?`;
+  params.push(courseId);
+
+  await executeQuery(query, params);
 }
 
-export async function searchCourses(searchTerm: string): Promise<Course[]> {
-  const query = `
-    SELECT c.*, COUNT(e.enrollment_id) as enrollment_count
-    FROM courses c
-    LEFT JOIN enrollments e ON c.course_id = e.course_id AND e.status = 'enrolled'
-    WHERE c.course_name LIKE ? OR c.course_code LIKE ?
-    GROUP BY c.course_id
-  `;
-  const term = `%${searchTerm}%`;
-  return executeQuery<Course>(query, [term, term]);
+export async function deleteCourse(courseId: number): Promise<void> {
+  const query = `DELETE FROM courses WHERE course_id = ?`;
+  await executeQuery(query, [courseId]);
 }
 
-export async function getAvailableCourses(limit: number = 20): Promise<Course[]> {
+export async function getCourseEnrollments(courseId: number): Promise<any[]> {
   const query = `
-    SELECT c.*, COUNT(e.enrollment_id) as enrollment_count
-    FROM courses c
-    LEFT JOIN enrollments e ON c.course_id = e.course_id AND e.status = 'enrolled'
-    GROUP BY c.course_id
-    HAVING enrollment_count < c.capacity
-    LIMIT ?
+    SELECT e.enrollment_id, e.student_id, u.first_name, u.last_name, e.status, e.grade
+    FROM enrollments e
+    JOIN students s ON e.student_id = s.student_id
+    JOIN users u ON s.user_id = u.user_id
+    WHERE e.course_id = ?
+    ORDER BY u.last_name, u.first_name
   `;
-  return executeQuery<Course>(query, [limit]);
+  return executeQuery(query, [courseId]);
+}
+
+export async function getCourseBySemester(departmentId: number, semester: number): Promise<Course[]> {
+  const query = `
+    SELECT * FROM courses
+    WHERE department_id = ? AND semester = ?
+    ORDER BY course_code
+  `;
+  return executeQuery<Course>(query, [departmentId, semester]);
 }

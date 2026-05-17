@@ -1,78 +1,59 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Course } from '@/lib/types';
 
-export function useCourses() {
+export function useCourses(departmentId?: number) {
   const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCourses = useCallback(
-    async (
-      departmentId?: number,
-      facultyId?: number,
-      limit: number = 50,
-      offset: number = 0
-    ) => {
+  useEffect(() => {
+    const fetchCourses = async () => {
       try {
         setLoading(true);
-        setError(null);
-
-        let url = `/api/courses?limit=${limit}&offset=${offset}`;
-        if (departmentId) {
-          url += `&departmentId=${departmentId}`;
-        }
-        if (facultyId) {
-          url += `&facultyId=${facultyId}`;
-        }
-
-        const response = await fetch(url, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-
+        const params = departmentId ? `?departmentId=${departmentId}` : '';
+        const response = await fetch(`/api/courses${params}`);
         if (!response.ok) throw new Error('Failed to fetch courses');
         const data = await response.json();
-        setCourses(data.data || []);
-        return data.data || [];
-      } catch (err: any) {
-        setError(err.message);
-        return [];
+        setCourses(data);
+        setError(null);
+      } catch (err) {
+        setError((err as Error).message);
+        setCourses([]);
       } finally {
         setLoading(false);
       }
-    },
-    []
-  );
+    };
 
-  const searchCourses = useCallback(async (term: string) => {
-    try {
-      setLoading(true);
-      setError(null);
+    fetchCourses();
+  }, [departmentId]);
 
-      const response = await fetch(`/api/courses?search=${term}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+  return { courses, loading, error };
+}
 
-      if (!response.ok) throw new Error('Search failed');
-      const data = await response.json();
-      setCourses(data.data || []);
-      return data.data || [];
-    } catch (err: any) {
-      setError(err.message);
-      return [];
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+export function useCourseEnrollments(courseId: number) {
+  const [enrollments, setEnrollments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  return {
-    courses,
-    loading,
-    error,
-    fetchCourses,
-    searchCourses,
-  };
+  useEffect(() => {
+    const fetchEnrollments = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/courses/${courseId}/enrollments`);
+        if (!response.ok) throw new Error('Failed to fetch enrollments');
+        const data = await response.json();
+        setEnrollments(data);
+        setError(null);
+      } catch (err) {
+        setError((err as Error).message);
+        setEnrollments([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEnrollments();
+  }, [courseId]);
+
+  return { enrollments, loading, error };
 }
