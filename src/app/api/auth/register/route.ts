@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { hashPassword } from '@/lib/utils/auth';
 import { callProcedure } from '@/lib/db/mysql';
 
 export async function POST(request: NextRequest) {
@@ -14,13 +15,14 @@ export async function POST(request: NextRequest) {
     }
 
     const username = email.split('@')[0];
+    const hashedPassword = await hashPassword(password);
 
     const result = await callProcedure(
       'sp_create_user',
       [
         username,
         email,
-        password,
+        hashedPassword,
         firstName,
         lastName,
         roleId || 7,

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateToken, hashPassword, comparePasswords } from '@/lib/utils/auth';
-import { callProcedure } from '@/lib/db/mysql';
+import { generateToken, comparePasswords } from '@/lib/utils/auth';
+import { executeQuery } from '@/lib/db/mysql';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,20 +13,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await callProcedure('sp_validate_credentials', [email, password], 3);
+    // Fetch user from database
+    const userQuery = `SELECT * FROM users WHERE email = ? AND status = 'active'`;
+    const userResults = await executeQuery(userQuery, [email]);
 
-    if (!result || !result.p_is_valid) {
+    if (userResults.length === 0) {
       return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }
       );
     }
 
-    // Fetch user details for token
-    const { executeQuery } = await import('@/lib/db/mysql');
-    const userQuery = `SELECT * FROM users WHERE user_id = ?`;
-    const userResults = await executeQuery(userQuery, [result.p_user_id]);
     const user = userResults[0];
+
+    // Compare passwords using bcrypt
+    const isValidPassword = await comparePasswords(password, user.password_hash);
+
+    if (!isValidPassword) {
+      return NextResponse.json(
+        { error: 'Invalid email or password' },
+        { status: 401 }
+      );
+    }
+
+    // Update last login time
+    await executeQuery('UPDATE users SET last_login = NOW() WHERE user_id = ?', [user.user_id]);
 
     const token = generateToken({
       user_id: user.user_id,
