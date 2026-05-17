@@ -33,16 +33,20 @@ export async function createUser(
   campusId: number = 1
 ): Promise<{ user_id: number; status: string }> {
   const username = email.split('@')[0];
-  return callProcedure('sp_create_user', [
-    username,
-    email,
-    password,
-    firstName,
-    lastName,
-    roleId,
-    departmentId || null,
-    campusId,
-  ]);
+  return callProcedure(
+    'sp_create_user',
+    [
+      username,
+      email,
+      password,
+      firstName,
+      lastName,
+      roleId,
+      departmentId || null,
+      campusId,
+    ],
+    2
+  );
 }
 
 export async function updateUserStatus(
@@ -169,11 +173,11 @@ export async function transferStudent(
   studentId: number,
   newDepartmentId: number
 ): Promise<{ status: string }> {
-  return callProcedure('sp_transfer_student', [studentId, newDepartmentId]);
+  return callProcedure('sp_transfer_student', [studentId, newDepartmentId], 2);
 }
 
 export async function deleteStudent(studentId: number): Promise<{ status: string }> {
-  return callProcedure('sp_delete_student', [studentId]);
+  return callProcedure('sp_delete_student', [studentId], 1);
 }
 
 export async function getUserRoleDistribution(): Promise<any[]> {

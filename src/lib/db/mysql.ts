@@ -45,13 +45,29 @@ export async function executeTransaction<T = any>(
 
 export async function callProcedure(
   procedureName: string,
-  parameters: any[] = []
+  parameters: any[] = [],
+  outParamCount: number = 2
 ): Promise<any> {
   const connection = await pool.getConnection();
   try {
-    const placeholders = parameters.map(() => '?').join(',');
+    const allParams = [...parameters];
+    for (let i = 0; i < outParamCount; i++) {
+      allParams.push(null);
+    }
+
+    const placeholders = allParams.map(() => '?').join(',');
     const query = `CALL ${procedureName}(${placeholders})`;
-    const [results] = await connection.execute(query, parameters);
+    const [results] = await connection.execute(query, allParams);
+
+    if (Array.isArray(results) && results.length > 0) {
+      const row = results[0];
+      return {
+        user_id: row.p_user_id || row['@p_user_id'],
+        status: row.p_error_message || row['@p_error_message'] || 'success',
+        message: row.p_error_message || row['@p_error_message']
+      };
+    }
+
     return results;
   } finally {
     connection.release();

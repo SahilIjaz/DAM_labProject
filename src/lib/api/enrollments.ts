@@ -16,7 +16,7 @@ export async function enrollStudent(
   courseId: number,
   semester: number
 ): Promise<{ enrollment_id: number; status: string }> {
-  return callProcedure('sp_enroll_student', [studentId, courseId, semester]);
+  return callProcedure('sp_enroll_student', [studentId, courseId, semester], 2);
 }
 
 export async function dropEnrollment(enrollmentId: number): Promise<void> {

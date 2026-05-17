@@ -15,16 +15,20 @@ export async function POST(request: NextRequest) {
 
     const username = email.split('@')[0];
 
-    const result = await callProcedure('sp_create_user', [
-      username,
-      email,
-      password,
-      firstName,
-      lastName,
-      roleId || 7,
-      departmentId || null,
-      campusId || 1,
-    ]);
+    const result = await callProcedure(
+      'sp_create_user',
+      [
+        username,
+        email,
+        password,
+        firstName,
+        lastName,
+        roleId || 7,
+        departmentId || null,
+        campusId || 1,
+      ],
+      2
+    );
 
     if (!result || result.status === 'failed') {
       return NextResponse.json(
