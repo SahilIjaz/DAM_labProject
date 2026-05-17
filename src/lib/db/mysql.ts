@@ -57,10 +57,10 @@ export async function callProcedure(
 
     const placeholders = allParams.map(() => '?').join(',');
     const query = `CALL ${procedureName}(${placeholders})`;
-    const [results] = await connection.execute(query, allParams);
+    const [results] = await connection.execute(query, allParams) as any[];
 
     if (Array.isArray(results) && results.length > 0) {
-      const row = results[0];
+      const row = results[0] as any;
       return {
         user_id: row.p_user_id || row['@p_user_id'],
         status: row.p_error_message || row['@p_error_message'] || 'success',

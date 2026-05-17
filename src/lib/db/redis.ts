@@ -1,12 +1,12 @@
 import redis from 'redis';
 
 const client = redis.createClient({
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379', 10),
-  password: process.env.REDIS_PASSWORD,
   socket: {
+    host: process.env.REDIS_HOST || 'localhost',
+    port: parseInt(process.env.REDIS_PORT || '6379', 10),
     reconnectStrategy: (retries) => Math.min(retries * 50, 500),
   },
+  password: process.env.REDIS_PASSWORD,
 });
 
 client.on('error', (err) => console.error('Redis Client Error', err));

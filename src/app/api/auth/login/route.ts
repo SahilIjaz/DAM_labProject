@@ -17,8 +17,6 @@ export async function POST(request: NextRequest) {
     const userQuery = `SELECT * FROM users WHERE email = ? AND status = 'active'`;
     const userResults = await executeQuery(userQuery, [email]);
 
-    console.log('Login attempt:', { email, userFound: userResults.length > 0 });
-
     if (userResults.length === 0) {
       return NextResponse.json(
         { error: 'Invalid email or password' },
@@ -28,17 +26,8 @@ export async function POST(request: NextRequest) {
 
     const user = userResults[0];
 
-    console.log('User found:', {
-      email: user.email,
-      userId: user.user_id,
-      hashLength: user.password_hash ? user.password_hash.length : 0,
-      hashPrefix: user.password_hash ? user.password_hash.substring(0, 20) : 'no hash',
-    });
-
     // Compare passwords using bcrypt
     const isValidPassword = await comparePasswords(password, user.password_hash);
-
-    console.log('Password comparison result:', isValidPassword);
 
     if (!isValidPassword) {
       return NextResponse.json(
@@ -68,7 +57,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error('Login error:', error);
     return NextResponse.json(
       { error: error.message || 'Internal server error' },
       { status: 500 }
