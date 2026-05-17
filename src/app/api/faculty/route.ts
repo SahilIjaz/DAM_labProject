@@ -1,44 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  getFaculty,
-  getFacultyByDepartment,
-  getFacultyByCampus,
-  searchFaculty,
-} from '@/lib/api/faculty';
-import { requireAuth } from '@/lib/middleware/auth';
+import { getFacultyMembers, createFaculty } from '@/lib/api/faculty';
 
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAuth(request);
-    if (!auth) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const offset = parseInt(searchParams.get('offset') || '0');
-    const search = searchParams.get('search');
     const departmentId = searchParams.get('departmentId');
-    const campusId = searchParams.get('campusId');
 
-    let data;
-    if (search) {
-      data = await searchFaculty(search);
-    } else if (departmentId) {
-      data = await getFacultyByDepartment(parseInt(departmentId));
-    } else if (campusId) {
-      data = await getFacultyByCampus(parseInt(campusId));
-    } else {
-      data = await getFaculty(limit, offset);
-    }
-
-    return NextResponse.json({
-      success: true,
-      data,
-    });
+    const faculty = await getFacultyMembers(departmentId ? parseInt(departmentId) : undefined);
+    return NextResponse.json(faculty);
   } catch (error: any) {
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: error.message || 'Failed to fetch faculty' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const { userId, departmentId, qualification, specialization, hiringDate } = await request.json();
+
+    if (!userId || !departmentId) {
+      return NextResponse.json(
+        { error: 'User ID and department are required' },
+        { status: 400 }
+      );
+    }
+
+    const result = await createFaculty(
+      userId,
+      departmentId,
+      qualification || '',
+      specialization || '',
+      hiringDate || new Date().toISOString().split('T')[0]
+    );
+
+    return NextResponse.json(result);
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || 'Failed to create faculty record' },
       { status: 500 }
     );
   }

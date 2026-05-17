@@ -1,0 +1,99 @@
+.container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.container h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.loading, .error {
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.loading {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.error {
+  background-color: #fee;
+  color: #c00;
+}
+
+.semester {
+  margin-bottom: 30px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.semester h3 {
+  color: #667eea;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.courseList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.course {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #fafafa;
+}
+
+.courseName {
+  flex-grow: 1;
+  font-weight: 500;
+  color: #333;
+}
+
+.courseStatus {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge.enrolled {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.badge.dropped {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.badge.completed {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.grade {
+  font-weight: 600;
+  color: #667eea;
+  font-size: 14px;
+}
