@@ -4,7 +4,6 @@ import {
   createExamResult,
   getExamResultsByStudent,
   getExamResultsByCourse,
-  getGradeDistribution,
 } from '@/lib/api/exams';
 import { requireAuth } from '@/lib/middleware/auth';
 

@@ -6,13 +6,13 @@ import { LoginForm } from '@/components/auth/LoginForm';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (email: string, password: string) => {
     try {
       setIsLoading(true);
-      setError(null);
+      setError(undefined);
 
       const response = await fetch('/api/auth/login', {
         method: 'POST',

@@ -1,15 +1,25 @@
+import { NextRequest } from 'next/server';
 import { verifyToken, extractTokenFromHeader, TokenPayload } from '../utils/auth';
 
 export interface AuthenticatedRequest {
   user?: TokenPayload;
-  headers: Record<string, string>;
+  headers: Record<string, string> | any;
   [key: string]: any;
 }
 
 export function authenticateToken(
-  req: AuthenticatedRequest
+  req: AuthenticatedRequest | NextRequest
 ): TokenPayload | null {
-  const authHeader = req.headers.authorization as string;
+  let authHeader: string | null = null;
+
+  if (req.headers instanceof Headers) {
+    authHeader = req.headers.get('authorization') || '';
+  } else if (typeof req.headers.get === 'function') {
+    authHeader = req.headers.get('authorization') || '';
+  } else {
+    authHeader = (req.headers as any).authorization || '';
+  }
+
   const token = extractTokenFromHeader(authHeader);
 
   if (!token) {
@@ -24,13 +34,15 @@ export function authenticateToken(
   }
 }
 
-export function requireAuth(req: AuthenticatedRequest): boolean {
+export async function requireAuth(req: AuthenticatedRequest | NextRequest): Promise<TokenPayload | null> {
   const user = authenticateToken(req);
   if (!user) {
-    return false;
+    return null;
   }
-  req.user = user;
-  return true;
+  if (typeof req === 'object' && 'user' in req) {
+    (req as any).user = user;
+  }
+  return user;
 }
 
 export function requireRole(req: AuthenticatedRequest, roleIds: number[]): boolean {

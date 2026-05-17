@@ -1,5 +1,5 @@
 import { executeQuery, executeTransaction, callProcedure } from '../db/mysql';
-import { User, Student, Faculty, Course, Department, Campus } from '../types';
+import { User, Faculty, Course, Department, Campus } from '../types';
 
 export async function getAllUsers(
   limit: number = 50,

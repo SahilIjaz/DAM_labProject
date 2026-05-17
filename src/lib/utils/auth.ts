@@ -5,7 +5,7 @@ import { User, AuthToken } from '../types';
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_key';
 const JWT_EXPIRE = process.env.JWT_EXPIRE || '7d';
 
-export function generateToken(user: User): AuthToken {
+export function generateToken(user: Partial<User>): AuthToken {
   const token = jwt.sign(
     {
       user_id: user.user_id,

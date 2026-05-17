@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Navbar } from '@/components/common/Navbar';
 import { Faculty } from '@/lib/types';
@@ -76,7 +76,7 @@ export default function FacultyPage() {
                   <h3>
                     {f.first_name} {f.last_name}
                   </h3>
-                  <span style={styles.employeeId}>{f.employee_id}</span>
+                  <span style={styles.employeeId}>{f.faculty_id}</span>
                 </div>
                 <div style={styles.cardBody}>
                   <p>
