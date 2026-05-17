@@ -13,16 +13,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await callProcedure('sp_validate_credentials', [email, password]);
+    const result = await callProcedure('sp_validate_credentials', [email, password], 3);
 
-    if (!result || result.status === 'failed') {
+    if (!result || !result.p_is_valid) {
       return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }
       );
     }
 
-    const user = result;
+    // Fetch user details for token
+    const { executeQuery } = await import('@/lib/db/mysql');
+    const userQuery = `SELECT * FROM users WHERE user_id = ?`;
+    const userResults = await executeQuery(userQuery, [result.p_user_id]);
+    const user = userResults[0];
+
     const token = generateToken({
       user_id: user.user_id,
       email: user.email,
