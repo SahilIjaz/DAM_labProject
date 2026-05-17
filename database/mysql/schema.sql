@@ -2,7 +2,8 @@
 -- Primary Database: university_main
 -- Server: Lahore (Master)
 
-CREATE DATABASE IF NOT EXISTS university_main;
+DROP DATABASE IF EXISTS university_main;
+CREATE DATABASE university_main CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE university_main;
 
 -- ============================================================================
@@ -15,7 +16,7 @@ CREATE TABLE IF NOT EXISTS roles (
   role_name VARCHAR(100) UNIQUE NOT NULL,
   description TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- PERMISSIONS Table
 CREATE TABLE IF NOT EXISTS permissions (
@@ -25,7 +26,7 @@ CREATE TABLE IF NOT EXISTS permissions (
   action VARCHAR(50) NOT NULL,
   description TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ROLE_PERMISSIONS Junction Table
 CREATE TABLE IF NOT EXISTS role_permissions (
@@ -34,7 +35,7 @@ CREATE TABLE IF NOT EXISTS role_permissions (
   PRIMARY KEY (role_id, permission_id),
   FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE,
   FOREIGN KEY (permission_id) REFERENCES permissions(permission_id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- CAMPUSES Table
 CREATE TABLE IF NOT EXISTS campuses (
@@ -47,7 +48,7 @@ CREATE TABLE IF NOT EXISTS campuses (
   replication_type ENUM('master', 'slave', 'distributed') DEFAULT 'master',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_city (city)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- DEPARTMENTS Table
 CREATE TABLE IF NOT EXISTS departments (
@@ -60,7 +61,7 @@ CREATE TABLE IF NOT EXISTS departments (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (campus_id) REFERENCES campuses(campus_id),
   INDEX idx_campus_id (campus_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- USERS Table
 CREATE TABLE IF NOT EXISTS users (
@@ -83,7 +84,7 @@ CREATE TABLE IF NOT EXISTS users (
   INDEX idx_email (email),
   INDEX idx_role_id (role_id),
   INDEX idx_department_id (department_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Update departments head_of_dept foreign key
 ALTER TABLE departments
@@ -106,7 +107,7 @@ CREATE TABLE IF NOT EXISTS students (
   INDEX idx_user_id (user_id),
   INDEX idx_enrollment_id (enrollment_id),
   INDEX idx_department_id (department_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- FACULTY Table
 CREATE TABLE IF NOT EXISTS faculty (
@@ -124,7 +125,7 @@ CREATE TABLE IF NOT EXISTS faculty (
   FOREIGN KEY (department_id) REFERENCES departments(department_id),
   INDEX idx_user_id (user_id),
   INDEX idx_department_id (department_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- COURSES Table
 CREATE TABLE IF NOT EXISTS courses (
@@ -143,7 +144,7 @@ CREATE TABLE IF NOT EXISTS courses (
   FOREIGN KEY (faculty_id) REFERENCES faculty(faculty_id),
   INDEX idx_department_id (department_id),
   INDEX idx_faculty_id (faculty_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ENROLLMENTS Table
 CREATE TABLE IF NOT EXISTS enrollments (
@@ -161,7 +162,7 @@ CREATE TABLE IF NOT EXISTS enrollments (
   UNIQUE KEY unique_enrollment (student_id, course_id, semester),
   INDEX idx_student_id (student_id),
   INDEX idx_course_id (course_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- EXAM_RESULTS Table
 CREATE TABLE IF NOT EXISTS exam_results (
@@ -177,7 +178,7 @@ CREATE TABLE IF NOT EXISTS exam_results (
   FOREIGN KEY (enrollment_id) REFERENCES enrollments(enrollment_id) ON DELETE CASCADE,
   INDEX idx_enrollment_id (enrollment_id),
   INDEX idx_exam_type (exam_type)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ID Sequences Table for generating sequential IDs
 CREATE TABLE IF NOT EXISTS id_sequences (
@@ -186,7 +187,7 @@ CREATE TABLE IF NOT EXISTS id_sequences (
   prefix VARCHAR(50),
   suffix VARCHAR(50),
   increment INT DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO id_sequences VALUES
 ('student_seq', 0, 'BULC_IT_F21_', '', 1),
@@ -208,7 +209,7 @@ CREATE TABLE IF NOT EXISTS audit_logs_temp (
   INDEX idx_user_id (user_id),
   INDEX idx_timestamp (timestamp),
   INDEX idx_action (action)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ============================================================================
 -- INSERT DEFAULT DATA
