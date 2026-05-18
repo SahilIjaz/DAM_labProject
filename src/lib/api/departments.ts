@@ -1,7 +1,7 @@
 import { executeQuery } from '../db/mysql';
 
 export async function getDepartments(): Promise<any[]> {
-  const query = `SELECT department_id, department_name FROM departments ORDER BY department_name`;
+  const query = `SELECT * FROM departments ORDER BY department_id`;
   return executeQuery(query, []);
 }
 

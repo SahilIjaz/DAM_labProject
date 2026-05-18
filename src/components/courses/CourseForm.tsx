@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 interface Department {
   department_id: number;
-  department_name: string;
+  dept_name: string;
 }
 
 export const CourseForm: React.FC = () => {
