@@ -5,10 +5,14 @@ import Link from 'next/link';
 import { Navbar } from '@/components/common/Navbar';
 
 interface DashboardStats {
-  totalStudents: number;
-  totalCourses: number;
-  activeEnrollments: number;
-  avgGPA: number;
+  total_users: number;
+  active_students: number;
+  active_faculty: number;
+  total_courses: number;
+  active_enrollments: number;
+  avg_student_gpa: number | null;
+  total_campuses: number;
+  total_departments: number;
 }
 
 export default function DashboardPage() {
@@ -21,8 +25,32 @@ export default function DashboardPage() {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-    fetchStats();
+    if (isAdminRole(storedUser ? JSON.parse(storedUser) : null)) {
+      fetchStats();
+    } else {
+      setLoading(false);
+    }
   }, []);
+
+  const isAdminRole = (userData: any) => {
+    return userData?.role_id === 1 || userData?.role_id === 2 || userData?.role_id === 3;
+  };
+
+  const getRoleName = (roleId: number) => {
+    const roles: Record<number, string> = {
+      1: 'Super Admin',
+      2: 'DBA',
+      3: 'System Admin',
+      4: 'Faculty',
+      5: 'Department Head',
+      6: 'Instructor',
+      7: 'Student',
+      8: 'Support Staff',
+      9: 'Data Entry',
+      10: 'Guest',
+    };
+    return roles[roleId] || 'User';
+  };
 
   const fetchStats = async () => {
     try {
@@ -59,32 +87,36 @@ export default function DashboardPage() {
         </div>
 
         {loading ? (
-          <div style={styles.loadingContainer}>Loading statistics...</div>
-        ) : (
+          <div style={styles.loadingContainer}>Loading...</div>
+        ) : isAdminRole(user) ? (
           <>
             <div style={styles.statsGrid}>
               <div style={styles.statCard}>
-                <h3 style={styles.statLabel}>Total Students</h3>
-                <p style={styles.statValue}>{stats?.totalStudents || 0}</p>
+                <h3 style={styles.statLabel}>Total Users</h3>
+                <p style={styles.statValue}>{stats?.total_users || 0}</p>
+              </div>
+              <div style={styles.statCard}>
+                <h3 style={styles.statLabel}>Active Students</h3>
+                <p style={styles.statValue}>{stats?.active_students || 0}</p>
               </div>
               <div style={styles.statCard}>
                 <h3 style={styles.statLabel}>Total Courses</h3>
-                <p style={styles.statValue}>{stats?.totalCourses || 0}</p>
+                <p style={styles.statValue}>{stats?.total_courses || 0}</p>
               </div>
               <div style={styles.statCard}>
                 <h3 style={styles.statLabel}>Active Enrollments</h3>
-                <p style={styles.statValue}>{stats?.activeEnrollments || 0}</p>
+                <p style={styles.statValue}>{stats?.active_enrollments || 0}</p>
               </div>
               <div style={styles.statCard}>
                 <h3 style={styles.statLabel}>Average GPA</h3>
                 <p style={styles.statValue}>
-                  {stats?.avgGPA?.toFixed(2) || 'N/A'}
+                  {stats?.avg_student_gpa?.toFixed(2) || 'N/A'}
                 </p>
               </div>
             </div>
 
             <div style={styles.quickLinksSection}>
-              <h2>Quick Actions</h2>
+              <h2>Admin Quick Actions</h2>
               <div style={styles.quickLinks}>
                 <Link href="/students" style={styles.quickLink}>
                   View Students
@@ -101,6 +133,91 @@ export default function DashboardPage() {
               </div>
             </div>
           </>
+        ) : (
+          <div style={styles.quickLinksSection}>
+            <h2>Your Dashboard</h2>
+            <p style={{ color: '#7f8c8d', marginBottom: '20px' }}>
+              Role: <strong>{getRoleName(user?.role_id)}</strong>
+            </p>
+
+            {user?.role_id === 7 && (
+              <>
+                <div style={styles.quickLinks}>
+                  <Link href="/courses" style={styles.quickLink}>
+                    Browse Courses
+                  </Link>
+                  <Link href="/exams" style={styles.quickLink}>
+                    View Exams
+                  </Link>
+                </div>
+                <p style={{ marginTop: '20px', color: '#7f8c8d' }}>
+                  As a student, you can view available courses and exams.
+                </p>
+              </>
+            )}
+
+            {(user?.role_id === 4 || user?.role_id === 6) && (
+              <>
+                <div style={styles.quickLinks}>
+                  <Link href="/courses" style={styles.quickLink}>
+                    My Courses
+                  </Link>
+                  <Link href="/exams" style={styles.quickLink}>
+                    Manage Exams
+                  </Link>
+                  <Link href="/students" style={styles.quickLink}>
+                    View Enrollments
+                  </Link>
+                </div>
+                <p style={{ marginTop: '20px', color: '#7f8c8d' }}>
+                  As an instructor/faculty member, you can manage courses and exams.
+                </p>
+              </>
+            )}
+
+            {user?.role_id === 5 && (
+              <>
+                <div style={styles.quickLinks}>
+                  <Link href="/students" style={styles.quickLink}>
+                    Department Students
+                  </Link>
+                  <Link href="/courses" style={styles.quickLink}>
+                    Department Courses
+                  </Link>
+                  <Link href="/faculty" style={styles.quickLink}>
+                    Department Faculty
+                  </Link>
+                </div>
+                <p style={{ marginTop: '20px', color: '#7f8c8d' }}>
+                  As a department head, you can manage your department's resources.
+                </p>
+              </>
+            )}
+
+            {(user?.role_id === 8 || user?.role_id === 9) && (
+              <>
+                <div style={styles.quickLinks}>
+                  <Link href="/students" style={styles.quickLink}>
+                    View Students
+                  </Link>
+                  <Link href="/courses" style={styles.quickLink}>
+                    View Courses
+                  </Link>
+                </div>
+                <p style={{ marginTop: '20px', color: '#7f8c8d' }}>
+                  You have limited access to view system data.
+                </p>
+              </>
+            )}
+
+            {user?.role_id === 10 && (
+              <div style={{ padding: '20px', backgroundColor: '#ecf0f1', borderRadius: '4px' }}>
+                <p style={{ color: '#7f8c8d' }}>
+                  As a guest user, your access is limited. Please contact an administrator for more features.
+                </p>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

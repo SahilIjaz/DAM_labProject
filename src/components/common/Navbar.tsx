@@ -15,6 +15,10 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const isAdminRole = (roleId: number) => {
+    return roleId === 1 || roleId === 2 || roleId === 3;
+  };
+
   const getRoleName = (roleId: number) => {
     const roles: Record<number, string> = {
       1: 'Super Admin',
@@ -42,15 +46,29 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
           <Link href="/dashboard" style={navbarStyles.link}>
             Dashboard
           </Link>
-          <Link href="/students" style={navbarStyles.link}>
-            Students
-          </Link>
-          <Link href="/courses" style={navbarStyles.link}>
-            Courses
-          </Link>
-          <Link href="/faculty" style={navbarStyles.link}>
-            Faculty
-          </Link>
+          {user && isAdminRole(user.role_id) && (
+            <>
+              <Link href="/students" style={navbarStyles.link}>
+                Students
+              </Link>
+              <Link href="/courses" style={navbarStyles.link}>
+                Courses
+              </Link>
+              <Link href="/faculty" style={navbarStyles.link}>
+                Faculty
+              </Link>
+            </>
+          )}
+          {user && !isAdminRole(user.role_id) && (
+            <>
+              <Link href="/courses" style={navbarStyles.link}>
+                Courses
+              </Link>
+              <Link href="/exams" style={navbarStyles.link}>
+                Exams
+              </Link>
+            </>
+          )}
         </div>
 
         <div style={navbarStyles.userSection}>
