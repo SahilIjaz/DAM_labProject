@@ -44,11 +44,13 @@ export function useStudents() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/api/students?search=${term}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      const token = localStorage.getItem('token');
+      const headers: any = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`/api/students?search=${term}`, { headers });
 
       if (!response.ok) throw new Error('Search failed');
       const data = await response.json();
