@@ -27,6 +27,9 @@ export default function CourseDetailPage() {
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [enrolling, setEnrolling] = useState(false);
+  const [enrollMessage, setEnrollMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -38,6 +41,7 @@ export default function CourseDetailPage() {
   useEffect(() => {
     if (courseId) {
       fetchCourse();
+      checkEnrollmentStatus();
     }
   }, [courseId]);
 
@@ -52,6 +56,60 @@ export default function CourseDetailPage() {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkEnrollmentStatus = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await fetch(`/api/enrollments/check?courseId=${courseId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setIsEnrolled(data.enrolled);
+      }
+    } catch (err) {
+      console.error('Failed to check enrollment status');
+    }
+  };
+
+  const handleEnroll = async () => {
+    try {
+      setEnrolling(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setEnrollMessage('Please log in first');
+        return;
+      }
+
+      const response = await fetch('/api/enrollments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          courseId: parseInt(courseId),
+          semester: course?.semester || 1,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        setEnrollMessage(error.error || 'Failed to enroll');
+        return;
+      }
+
+      setIsEnrolled(true);
+      setEnrollMessage('Successfully enrolled in the course!');
+      setTimeout(() => setEnrollMessage(null), 3000);
+    } catch (err: any) {
+      setEnrollMessage(err.message || 'Failed to enroll');
+    } finally {
+      setEnrolling(false);
     }
   };
 
@@ -163,6 +221,35 @@ export default function CourseDetailPage() {
               <p style={styles.syllabusText}>{course.syllabus}</p>
             </div>
           )}
+
+          {user?.role_id === 7 && (
+            <div style={styles.enrollSection}>
+              {enrollMessage && (
+                <div style={{
+                  padding: '12px',
+                  backgroundColor: isEnrolled ? '#d4edda' : '#f8d7da',
+                  color: isEnrolled ? '#155724' : '#721c24',
+                  borderRadius: '4px',
+                  marginBottom: '15px',
+                  fontSize: '14px',
+                }}>
+                  {enrollMessage}
+                </div>
+              )}
+              <button
+                onClick={handleEnroll}
+                disabled={enrolling || isEnrolled}
+                style={{
+                  ...styles.enrollButton,
+                  backgroundColor: isEnrolled ? '#95a5a6' : '#27ae60',
+                  cursor: isEnrolled || enrolling ? 'not-allowed' : 'pointer',
+                  opacity: isEnrolled || enrolling ? 0.6 : 1,
+                }}
+              >
+                {enrolling ? 'Enrolling...' : isEnrolled ? 'Already Enrolled' : 'Enroll in Course'}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -257,5 +344,19 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#721c24',
     borderRadius: '4px',
     marginBottom: '20px',
+  },
+  enrollSection: {
+    marginTop: '30px',
+    paddingTop: '20px',
+    borderTop: '1px solid #ecf0f1',
+  },
+  enrollButton: {
+    padding: '12px 30px',
+    backgroundColor: '#27ae60',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    fontSize: '16px',
+    fontWeight: 'bold',
   },
 };
