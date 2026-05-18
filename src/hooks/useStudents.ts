@@ -17,11 +17,13 @@ export function useStudents() {
           url += `&departmentId=${departmentId}`;
         }
 
-        const response = await fetch(url, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
+        const token = localStorage.getItem('token');
+        const headers: any = {};
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(url, { headers });
 
         if (!response.ok) throw new Error('Failed to fetch students');
         const data = await response.json();

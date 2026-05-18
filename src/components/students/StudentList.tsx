@@ -30,7 +30,12 @@ export const StudentList: React.FC<StudentListProps> = ({
       const endpoint = departmentId
         ? `/api/students?departmentId=${departmentId}`
         : '/api/students';
-      const response = await fetch(endpoint);
+      const token = localStorage.getItem('token');
+      const headers: any = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      const response = await fetch(endpoint, { headers });
       if (!response.ok) throw new Error('Failed to fetch students');
       const data = await response.json();
       setStudents(data.data || []);
