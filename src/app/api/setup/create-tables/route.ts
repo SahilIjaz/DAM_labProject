@@ -25,50 +25,6 @@ export async function POST(request: NextRequest) {
 
     await executeQuery(createTableQuery, []);
 
-    // Get existing courses or create sample courses
-    const coursesResult = await executeQuery('SELECT COUNT(*) as count FROM courses', []);
-    const courseCount = (coursesResult[0] as any).count;
-
-    if (courseCount === 0) {
-      // Insert sample courses if they don't exist
-      const insertCoursesQuery = `
-        INSERT INTO courses (course_code, course_name, department_id, credit_hours, capacity, semester)
-        VALUES
-        ('MATH101', 'Calculus I', 1, 3, 50, 1),
-        ('PHYS101', 'Physics I', 2, 4, 40, 1),
-        ('CHEM101', 'Chemistry I', 1, 3, 45, 1),
-        ('ENG101', 'English Composition', 3, 3, 35, 1)
-      `;
-      await executeQuery(insertCoursesQuery, []);
-    }
-
-    // Insert sample exam data
-    const insertDataQuery = `
-      INSERT IGNORE INTO exams (exam_name, course_id, exam_date, duration, total_marks, passing_marks, exam_type)
-      SELECT ?, course_id, ?, ?, ?, ?, ? FROM courses WHERE course_code = ?
-      UNION ALL
-      SELECT ?, course_id, ?, ?, ?, ?, ? FROM courses WHERE course_code = ?
-      UNION ALL
-      SELECT ?, course_id, ?, ?, ?, ?, ? FROM courses WHERE course_code = ?
-      UNION ALL
-      SELECT ?, course_id, ?, ?, ?, ?, ? FROM courses WHERE course_code = ?
-      UNION ALL
-      SELECT ?, course_id, ?, ?, ?, ?, ? FROM courses WHERE course_code = ?
-      UNION ALL
-      SELECT ?, course_id, ?, ?, ?, ?, ? FROM courses WHERE course_code = ?
-    `;
-
-    const examData = [
-      'Mathematics Midterm', '2026-06-05 10:00:00', 120, 100, 40, 'midterm', 'MATH101',
-      'Mathematics Final', '2026-07-20 14:00:00', 180, 100, 40, 'final', 'MATH101',
-      'Physics Quiz 1', '2026-06-10 09:00:00', 60, 50, 25, 'quiz', 'PHYS101',
-      'Physics Midterm', '2026-06-25 10:00:00', 120, 100, 40, 'midterm', 'PHYS101',
-      'Chemistry Final', '2026-07-22 15:00:00', 180, 100, 40, 'final', 'CHEM101',
-      'English Composition Test', '2026-06-15 11:00:00', 120, 100, 40, 'final', 'ENG101'
-    ];
-
-    await executeQuery(insertDataQuery, examData);
-
     return NextResponse.json({
       success: true,
       message: 'Tables created and sample data inserted',

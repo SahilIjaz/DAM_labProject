@@ -131,7 +131,7 @@ export const CourseForm: React.FC = () => {
               <option value="">Select a department</option>
               {departments.map((dept) => (
                 <option key={dept.department_id} value={dept.department_id}>
-                  {dept.department_name}
+                  {dept.dept_name}
                 </option>
               ))}
             </select>
