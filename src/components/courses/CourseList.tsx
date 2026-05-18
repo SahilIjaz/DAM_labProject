@@ -20,9 +20,16 @@ export const CourseList: React.FC<CourseListProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [user, setUser] = useState<any>(null);
+  const [enrollingCourseId, setEnrollingCourseId] = useState<number | null>(null);
+  const [enrollmentMessage, setEnrollmentMessage] = useState<string | null>(null);
   const itemsPerPage = 10;
 
   useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
     fetchCourses();
   }, [departmentId, facultyId]);
 
@@ -45,6 +52,61 @@ export const CourseList: React.FC<CourseListProps> = ({
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSelectCourse = async (course: Course) => {
+    if (user?.role_id !== 7) {
+      setEnrollmentMessage('Only students can enroll in courses');
+      setTimeout(() => setEnrollmentMessage(null), 3000);
+      return;
+    }
+
+    setEnrollingCourseId(course.course_id);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setEnrollmentMessage('Please log in first');
+        setEnrollingCourseId(null);
+        return;
+      }
+
+      const response = await fetch('/api/enrollments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          courseId: course.course_id,
+          semester: course.semester || 1,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setEnrollmentMessage(data.error || 'Failed to enroll');
+        setEnrollingCourseId(null);
+        setTimeout(() => setEnrollmentMessage(null), 3000);
+        return;
+      }
+
+      setCourses((prevCourses) =>
+        prevCourses.map((c) =>
+          c.course_id === course.course_id
+            ? { ...c, enrollment_count: (c.enrollment_count || 0) + 1 }
+            : c
+        )
+      );
+
+      setEnrollmentMessage(`Successfully enrolled in ${course.course_name}!`);
+      setTimeout(() => setEnrollmentMessage(null), 3000);
+    } catch (err: any) {
+      setEnrollmentMessage(err.message || 'Failed to enroll');
+      setTimeout(() => setEnrollmentMessage(null), 3000);
+    } finally {
+      setEnrollingCourseId(null);
     }
   };
 
@@ -77,6 +139,19 @@ export const CourseList: React.FC<CourseListProps> = ({
           Create New Course
         </Link>
       </div>
+
+      {enrollmentMessage && (
+        <div style={{
+          padding: '12px',
+          backgroundColor: enrollmentMessage.includes('Successfully') ? '#d4edda' : '#f8d7da',
+          color: enrollmentMessage.includes('Successfully') ? '#155724' : '#721c24',
+          borderRadius: '4px',
+          marginBottom: '15px',
+          fontSize: '14px',
+        }}>
+          {enrollmentMessage}
+        </div>
+      )}
 
       <input
         type="text"
@@ -128,10 +203,15 @@ export const CourseList: React.FC<CourseListProps> = ({
                 View Details
               </Link>
               <button
-                onClick={() => onCourseSelect?.(course)}
-                style={styles.actionButton}
+                onClick={() => handleSelectCourse(course)}
+                disabled={enrollingCourseId === course.course_id}
+                style={{
+                  ...styles.actionButton,
+                  opacity: enrollingCourseId === course.course_id ? 0.6 : 1,
+                  cursor: enrollingCourseId === course.course_id ? 'not-allowed' : 'pointer',
+                }}
               >
-                Select
+                {enrollingCourseId === course.course_id ? 'Enrolling...' : 'Select'}
               </button>
             </div>
           </div>

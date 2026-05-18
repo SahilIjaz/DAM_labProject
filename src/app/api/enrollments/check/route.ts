@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { checkEnrollment } from '@/lib/api/enrollments';
+import { executeQuery } from '@/lib/db/mysql';
 
 export async function GET(request: NextRequest) {
   try {
@@ -23,7 +24,21 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const enrolled = await checkEnrollment(decoded.studentId, parseInt(courseId));
+    const studentResults = await executeQuery(
+      'SELECT student_id FROM students WHERE user_id = ?',
+      [decoded.user_id]
+    );
+
+    if (studentResults.length === 0) {
+      return NextResponse.json(
+        { error: 'Student record not found' },
+        { status: 404 }
+      );
+    }
+
+    const studentId = (studentResults[0] as any).student_id;
+
+    const enrolled = await checkEnrollment(studentId, parseInt(courseId));
 
     return NextResponse.json({
       success: true,

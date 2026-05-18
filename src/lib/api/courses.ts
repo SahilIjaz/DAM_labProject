@@ -2,16 +2,31 @@ import { executeQuery, callProcedure } from '../db/mysql';
 import { Course } from '../types';
 
 export async function getCourses(departmentId?: number): Promise<Course[]> {
+  const baseQuery = `
+    SELECT c.*,
+      COUNT(CASE WHEN e.status = 'enrolled' THEN 1 END) as enrollment_count
+    FROM courses c
+    LEFT JOIN enrollments e ON c.course_id = e.course_id
+  `;
+
   if (departmentId) {
-    const query = `SELECT * FROM courses WHERE department_id = ? ORDER BY course_code`;
+    const query = baseQuery + `WHERE c.department_id = ? GROUP BY c.course_id ORDER BY c.course_code`;
     return executeQuery<Course>(query, [departmentId]);
   }
-  const query = `SELECT * FROM courses ORDER BY course_code`;
+
+  const query = baseQuery + `GROUP BY c.course_id ORDER BY c.course_code`;
   return executeQuery<Course>(query, []);
 }
 
 export async function getCourseById(courseId: number): Promise<Course | null> {
-  const query = `SELECT * FROM courses WHERE course_id = ?`;
+  const query = `
+    SELECT c.*,
+      COUNT(CASE WHEN e.status = 'enrolled' THEN 1 END) as enrollment_count
+    FROM courses c
+    LEFT JOIN enrollments e ON c.course_id = e.course_id
+    WHERE c.course_id = ?
+    GROUP BY c.course_id
+  `;
   const results = await executeQuery<Course>(query, [courseId]);
   return results[0] || null;
 }

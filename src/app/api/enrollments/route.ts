@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { createEnrollment, checkEnrollment } from '@/lib/api/enrollments';
+import { executeQuery } from '@/lib/db/mysql';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,7 +23,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const isAlreadyEnrolled = await checkEnrollment(decoded.studentId, courseId);
+    const studentResults = await executeQuery(
+      'SELECT student_id FROM students WHERE user_id = ?',
+      [decoded.user_id]
+    );
+
+    if (studentResults.length === 0) {
+      return NextResponse.json(
+        { error: 'Student record not found' },
+        { status: 404 }
+      );
+    }
+
+    const studentId = (studentResults[0] as any).student_id;
+
+    const isAlreadyEnrolled = await checkEnrollment(studentId, courseId);
     if (isAlreadyEnrolled) {
       return NextResponse.json(
         { error: 'Already enrolled in this course' },
@@ -30,7 +45,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await createEnrollment(decoded.studentId, courseId, semester);
+    const result = await createEnrollment(studentId, courseId, semester);
 
     return NextResponse.json({
       success: true,
