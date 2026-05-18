@@ -21,7 +21,13 @@ export const StudentList: React.FC<StudentListProps> = ({
   const itemsPerPage = 10;
 
   useEffect(() => {
-    fetchStudents();
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetchStudents();
+    } else {
+      setLoading(false);
+      setError('Please login first');
+    }
   }, [departmentId]);
 
   const fetchStudents = async () => {
