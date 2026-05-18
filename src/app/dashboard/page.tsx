@@ -165,9 +165,6 @@ export default function DashboardPage() {
                   <Link href="/exams" style={styles.quickLink}>
                     Manage Exams
                   </Link>
-                  <Link href="/students" style={styles.quickLink}>
-                    View Enrollments
-                  </Link>
                 </div>
                 <p style={{ marginTop: '20px', color: '#7f8c8d' }}>
                   As an instructor/faculty member, you can manage courses and exams.
