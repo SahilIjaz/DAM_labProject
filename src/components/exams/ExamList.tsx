@@ -38,14 +38,20 @@ export const ExamList: React.FC<ExamListProps> = ({
   const fetchExams = async () => {
     try {
       setLoading(true);
-      let endpoint = '/api/exams';
+      let endpoint = '/api/exams-list';
       const params = new URLSearchParams();
 
       if (courseId) params.append('courseId', courseId.toString());
 
       if (params.toString()) endpoint += `?${params.toString()}`;
 
-      const response = await fetch(endpoint);
+      const token = localStorage.getItem('token');
+      const response = await fetch(endpoint, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
       if (!response.ok) throw new Error('Failed to fetch exams');
       const data = await response.json();
       setExams(data.data || []);
