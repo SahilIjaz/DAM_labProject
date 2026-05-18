@@ -32,12 +32,12 @@ export async function POST(request: NextRequest) {
     if (courseCount === 0) {
       // Insert sample courses if they don't exist
       const insertCoursesQuery = `
-        INSERT INTO courses (department_id, course_code, course_name, description, credits, semester, status)
+        INSERT INTO courses (department_id, course_code, course_name, credits, semester, status)
         VALUES
-        (1, 'MATH101', 'Calculus I', 'Introduction to Calculus', 3, 1, 'active'),
-        (2, 'PHYS101', 'Physics I', 'Introduction to Physics', 4, 1, 'active'),
-        (1, 'CHEM101', 'Chemistry I', 'Introduction to Chemistry', 3, 1, 'active'),
-        (3, 'ENG101', 'English Composition', 'Academic Writing', 3, 1, 'active')
+        (1, 'MATH101', 'Calculus I', 3, 1, 'active'),
+        (2, 'PHYS101', 'Physics I', 4, 1, 'active'),
+        (1, 'CHEM101', 'Chemistry I', 3, 1, 'active'),
+        (3, 'ENG101', 'English Composition', 3, 1, 'active')
       `;
       await executeQuery(insertCoursesQuery, []);
     }
