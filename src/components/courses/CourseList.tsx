@@ -135,9 +135,11 @@ export const CourseList: React.FC<CourseListProps> = ({
     <div style={styles.container}>
       <div style={styles.header}>
         <h2>Courses</h2>
-        <Link href="/courses/create" style={styles.createButton}>
-          Create New Course
-        </Link>
+        {user?.role_id !== 7 && (
+          <Link href="/courses/create" style={styles.createButton}>
+            Create New Course
+          </Link>
+        )}
       </div>
 
       {enrollmentMessage && (
