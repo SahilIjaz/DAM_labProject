@@ -25,18 +25,49 @@ export async function POST(request: NextRequest) {
 
     await executeQuery(createTableQuery, []);
 
+    // Get existing courses or create sample courses
+    const coursesResult = await executeQuery('SELECT COUNT(*) as count FROM courses', []);
+    const courseCount = (coursesResult[0] as any).count;
+
+    if (courseCount === 0) {
+      // Insert sample courses if they don't exist
+      const insertCoursesQuery = `
+        INSERT INTO courses (department_id, course_code, course_name, description, credits, semester, status)
+        VALUES
+        (1, 'MATH101', 'Calculus I', 'Introduction to Calculus', 3, 1, 'active'),
+        (2, 'PHYS101', 'Physics I', 'Introduction to Physics', 4, 1, 'active'),
+        (1, 'CHEM101', 'Chemistry I', 'Introduction to Chemistry', 3, 1, 'active'),
+        (3, 'ENG101', 'English Composition', 'Academic Writing', 3, 1, 'active')
+      `;
+      await executeQuery(insertCoursesQuery, []);
+    }
+
     // Insert sample exam data
     const insertDataQuery = `
-      INSERT IGNORE INTO exams (exam_id, course_id, exam_name, exam_date, duration, total_marks, passing_marks, exam_type) VALUES
-      (1, 1, 'Mathematics Midterm', '2026-06-05 10:00:00', 120, 100, 40, 'midterm'),
-      (2, 1, 'Mathematics Final', '2026-07-20 14:00:00', 180, 100, 40, 'final'),
-      (3, 2, 'Physics Quiz 1', '2026-06-10 09:00:00', 60, 50, 25, 'quiz'),
-      (4, 2, 'Physics Midterm', '2026-06-25 10:00:00', 120, 100, 40, 'midterm'),
-      (5, 3, 'Chemistry Final', '2026-07-22 15:00:00', 180, 100, 40, 'final'),
-      (6, 4, 'English Composition', '2026-06-15 11:00:00', 120, 100, 40, 'final')
+      INSERT IGNORE INTO exams (exam_name, course_id, exam_date, duration, total_marks, passing_marks, exam_type)
+      SELECT ?, course_id, ?, ?, ?, ?, ? FROM courses WHERE course_code = ?
+      UNION ALL
+      SELECT ?, course_id, ?, ?, ?, ?, ? FROM courses WHERE course_code = ?
+      UNION ALL
+      SELECT ?, course_id, ?, ?, ?, ?, ? FROM courses WHERE course_code = ?
+      UNION ALL
+      SELECT ?, course_id, ?, ?, ?, ?, ? FROM courses WHERE course_code = ?
+      UNION ALL
+      SELECT ?, course_id, ?, ?, ?, ?, ? FROM courses WHERE course_code = ?
+      UNION ALL
+      SELECT ?, course_id, ?, ?, ?, ?, ? FROM courses WHERE course_code = ?
     `;
 
-    await executeQuery(insertDataQuery, []);
+    const examData = [
+      'Mathematics Midterm', '2026-06-05 10:00:00', 120, 100, 40, 'midterm', 'MATH101',
+      'Mathematics Final', '2026-07-20 14:00:00', 180, 100, 40, 'final', 'MATH101',
+      'Physics Quiz 1', '2026-06-10 09:00:00', 60, 50, 25, 'quiz', 'PHYS101',
+      'Physics Midterm', '2026-06-25 10:00:00', 120, 100, 40, 'midterm', 'PHYS101',
+      'Chemistry Final', '2026-07-22 15:00:00', 180, 100, 40, 'final', 'CHEM101',
+      'English Composition Test', '2026-06-15 11:00:00', 120, 100, 40, 'final', 'ENG101'
+    ];
+
+    await executeQuery(insertDataQuery, examData);
 
     return NextResponse.json({
       success: true,
