@@ -59,7 +59,20 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
               </Link>
             </>
           )}
-          {user && !isAdminRole(user.role_id) && (
+          {user && user.role_id === 6 && (
+            <>
+              <Link href="/courses" style={navbarStyles.link}>
+                Courses
+              </Link>
+              <Link href="/enrollments" style={navbarStyles.link}>
+                Enrollments
+              </Link>
+              <Link href="/exams" style={navbarStyles.link}>
+                Exams
+              </Link>
+            </>
+          )}
+          {user && user.role_id === 7 && (
             <>
               <Link href="/courses" style={navbarStyles.link}>
                 Courses
