@@ -27,18 +27,16 @@ export async function GET(request: NextRequest) {
         e.exam_type
       FROM exams e
       LEFT JOIN courses c ON e.course_id = c.course_id
-      WHERE 1=1
     `;
 
     const params: any[] = [];
 
     if (courseId) {
-      query += ` AND e.course_id = ?`;
+      query += ` WHERE e.course_id = ?`;
       params.push(parseInt(courseId));
     }
 
-    query += ` ORDER BY e.exam_date DESC LIMIT ? OFFSET ?`;
-    params.push(limit, offset);
+    query += ` ORDER BY e.exam_date DESC`;
 
     const results = await executeQuery(query, params);
 
