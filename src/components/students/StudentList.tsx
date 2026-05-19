@@ -114,7 +114,7 @@ export const StudentList: React.FC<StudentListProps> = ({
                 </td>
                 <td style={styles.td}>{student.email}</td>
                 <td style={styles.td}>{student.enrollment_id}</td>
-                <td style={styles.td}>{student.gpa?.toFixed(2) || 'N/A'}</td>
+                <td style={styles.td}>{student.gpa ? parseFloat(student.gpa as any).toFixed(2) : 'N/A'}</td>
                 <td style={styles.td}>
                   <span
                     style={{
