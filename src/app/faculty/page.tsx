@@ -28,7 +28,7 @@ export default function FacultyPage() {
       });
       if (response.ok) {
         const data = await response.json();
-        setFaculty(data.data || []);
+        setFaculty(Array.isArray(data) ? data : data.data || []);
       }
     } catch (error) {
       console.error('Failed to fetch faculty:', error);
