@@ -6,7 +6,9 @@ export async function getStudents(
   offset: number = 0
 ): Promise<Student[]> {
   const query = `
-    SELECT u.*, s.* FROM students s
+    SELECT s.student_id, s.user_id, s.department_id, s.enrollment_id, s.gpa, s.current_semester, s.enrollment_date, s.status,
+           u.username, u.email, u.first_name, u.last_name, u.role_id, u.department_id as user_department_id, u.campus_id, u.last_login, u.status as user_status
+    FROM students s
     JOIN users u ON s.user_id = u.user_id
     WHERE s.status = 'active'
     LIMIT ? OFFSET ?
@@ -16,7 +18,9 @@ export async function getStudents(
 
 export async function getStudentById(studentId: number): Promise<Student | null> {
   const query = `
-    SELECT u.*, s.* FROM students s
+    SELECT s.student_id, s.user_id, s.department_id, s.enrollment_id, s.gpa, s.current_semester, s.enrollment_date, s.status,
+           u.username, u.email, u.first_name, u.last_name, u.role_id, u.department_id as user_department_id, u.campus_id, u.last_login, u.status as user_status
+    FROM students s
     JOIN users u ON s.user_id = u.user_id
     WHERE s.student_id = ?
   `;
@@ -26,7 +30,9 @@ export async function getStudentById(studentId: number): Promise<Student | null>
 
 export async function getStudentByUserId(userId: number): Promise<Student | null> {
   const query = `
-    SELECT u.*, s.* FROM students s
+    SELECT s.student_id, s.user_id, s.department_id, s.enrollment_id, s.gpa, s.current_semester, s.enrollment_date, s.status,
+           u.username, u.email, u.first_name, u.last_name, u.role_id, u.department_id as user_department_id, u.campus_id, u.last_login, u.status as user_status
+    FROM students s
     JOIN users u ON s.user_id = u.user_id
     WHERE s.user_id = ?
   `;
