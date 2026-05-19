@@ -140,11 +140,27 @@ export const StudentList: React.FC<StudentListProps> = ({
         </table>
       </div>
 
-      <div style={styles.pagination}>
-        <span style={styles.pageInfo}>
-          Page {currentPage} of {totalPages}
-        </span>
-      </div>
+      {totalPages > 1 && (
+        <div style={styles.pagination}>
+          <button
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            style={{...styles.paginationButton, opacity: currentPage === 1 ? 0.5 : 1}}
+          >
+            Previous
+          </button>
+          <span style={styles.pageInfo}>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+            style={{...styles.paginationButton, opacity: currentPage === totalPages ? 0.5 : 1}}
+          >
+            Next
+          </button>
+        </div>
+      )}
 
     </div>
   );
