@@ -276,18 +276,31 @@ export default function CourseDetailPage() {
             <div style={styles.detailItem}>
               <label style={styles.detailLabel}>Faculty Assignment</label>
               {user?.role_id === 8 || user?.role_id === 9 ? (
-                <select
-                  value={selectedFacultyId || ''}
-                  onChange={(e) => setSelectedFacultyId(e.target.value ? parseInt(e.target.value) : null)}
-                  style={styles.facultySelect}
-                >
-                  <option value="">Select a faculty member</option>
-                  {faculty.map((f) => (
-                    <option key={f.faculty_id} value={f.faculty_id}>
-                      {f.first_name} {f.last_name}
-                    </option>
-                  ))}
-                </select>
+                <>
+                  <select
+                    value={selectedFacultyId || ''}
+                    onChange={(e) => {
+                      const facultyId = e.target.value ? parseInt(e.target.value) : null;
+                      setSelectedFacultyId(facultyId);
+                      if (facultyId) {
+                        handleAssignFaculty(facultyId);
+                      }
+                    }}
+                    style={styles.facultySelect}
+                  >
+                    <option value="">Select a faculty member</option>
+                    {faculty.map((f) => (
+                      <option key={f.faculty_id} value={f.faculty_id}>
+                        {f.first_name} {f.last_name}
+                      </option>
+                    ))}
+                  </select>
+                  {course.faculty_id && (
+                    <p style={{ ...styles.detailValue, marginTop: '10px', color: '#27ae60', fontWeight: 'bold' }}>
+                      ✓ Assigned: {faculty.find((f) => f.faculty_id === course.faculty_id)?.first_name} {faculty.find((f) => f.faculty_id === course.faculty_id)?.last_name}
+                    </p>
+                  )}
+                </>
               ) : (
                 <p style={styles.detailValue}>
                   {course.faculty_id
@@ -321,32 +334,16 @@ export default function CourseDetailPage() {
             </div>
           )}
 
-          {(user?.role_id === 8 || user?.role_id === 9) && (
-            <div style={styles.assignSection}>
-              {assignMessage && (
-                <div style={{
-                  padding: '12px',
-                  backgroundColor: assignMessage.includes('success') ? '#d4edda' : '#f8d7da',
-                  color: assignMessage.includes('success') ? '#155724' : '#721c24',
-                  borderRadius: '4px',
-                  marginBottom: '15px',
-                  fontSize: '14px',
-                }}>
-                  {assignMessage}
-                </div>
-              )}
-              <button
-                onClick={handleAssignFaculty}
-                disabled={assigningFaculty || !selectedFacultyId}
-                style={{
-                  ...styles.assignButton,
-                  backgroundColor: !selectedFacultyId ? '#95a5a6' : '#3498db',
-                  cursor: assigningFaculty || !selectedFacultyId ? 'not-allowed' : 'pointer',
-                  opacity: assigningFaculty || !selectedFacultyId ? 0.6 : 1,
-                }}
-              >
-                {assigningFaculty ? 'Assigning...' : 'Assign Faculty'}
-              </button>
+          {assignMessage && (
+            <div style={{
+              padding: '12px',
+              backgroundColor: assignMessage.includes('success') ? '#d4edda' : '#f8d7da',
+              color: assignMessage.includes('success') ? '#155724' : '#721c24',
+              borderRadius: '4px',
+              marginTop: '20px',
+              fontSize: '14px',
+            }}>
+              {assignMessage}
             </div>
           )}
 
