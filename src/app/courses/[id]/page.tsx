@@ -90,6 +90,68 @@ export default function CourseDetailPage() {
     }
   };
 
+  const fetchFaculty = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await fetch('/api/faculty', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const facultyList = Array.isArray(data) ? data : data.data || [];
+        setFaculty(facultyList);
+        if (course?.faculty_id) {
+          setSelectedFacultyId(course.faculty_id);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch faculty:', err);
+    }
+  };
+
+  const handleAssignFaculty = async () => {
+    if (!selectedFacultyId) {
+      setAssignMessage('Please select a faculty member');
+      return;
+    }
+
+    try {
+      setAssigningFaculty(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setAssignMessage('Please log in first');
+        return;
+      }
+
+      const response = await fetch(`/api/courses/${courseId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          faculty_id: selectedFacultyId,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        setAssignMessage(error.error || 'Failed to assign faculty');
+        return;
+      }
+
+      setAssignMessage('Faculty assigned successfully!');
+      setCourse({ ...course!, faculty_id: selectedFacultyId });
+      setTimeout(() => setAssignMessage(null), 3000);
+    } catch (err: any) {
+      setAssignMessage(err.message || 'Failed to assign faculty');
+    } finally {
+      setAssigningFaculty(false);
+    }
+  };
+
   const handleEnroll = async () => {
     try {
       setEnrolling(true);
