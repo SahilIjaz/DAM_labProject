@@ -5,6 +5,8 @@ const client = createClient({
     host: process.env.REDIS_HOST || 'localhost',
     port: parseInt(process.env.REDIS_PORT || '6379', 10),
     reconnectStrategy: (retries) => Math.min(retries * 50, 500),
+    connectTimeout: 2000,
+    keepAlive: 30000,
   },
   password: process.env.REDIS_PASSWORD,
 });
