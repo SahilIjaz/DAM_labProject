@@ -108,39 +108,6 @@ export default function FacultyDashboardPage() {
               )}
             </div>
 
-            {/* Instructors Section */}
-            <div style={styles.section}>
-              <h2 style={styles.sectionTitle}>Department Instructors</h2>
-              {data?.instructors && data.instructors.length > 0 ? (
-                <div style={styles.tableWrapper}>
-                  <table style={styles.table}>
-                    <thead>
-                      <tr style={styles.headerRow}>
-                        <th style={styles.th}>Name</th>
-                        <th style={styles.th}>Email</th>
-                        <th style={styles.th}>Specialization</th>
-                        <th style={styles.th}>Courses Taught</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.instructors.map((instructor) => (
-                        <tr key={instructor.faculty_id} style={styles.bodyRow}>
-                          <td style={styles.td}>
-                            {instructor.first_name} {instructor.last_name}
-                          </td>
-                          <td style={styles.td}>{instructor.email}</td>
-                          <td style={styles.td}>{instructor.specialization || 'N/A'}</td>
-                          <td style={styles.td}>{instructor.courses_taught}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <p style={styles.emptyMessage}>No instructors found in this department.</p>
-              )}
-            </div>
-
             {/* Students Section */}
             <div style={styles.section}>
               <h2 style={styles.sectionTitle}>Department Students</h2>
