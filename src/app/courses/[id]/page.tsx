@@ -109,9 +109,8 @@ export default function CourseDetailPage() {
     }
   };
 
-  const handleAssignFaculty = async () => {
-    if (!selectedFacultyId) {
-      setAssignMessage('Please select a faculty member');
+  const handleAssignFaculty = async (facultyId: number | null) => {
+    if (!facultyId) {
       return;
     }
 
@@ -130,7 +129,7 @@ export default function CourseDetailPage() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          faculty_id: selectedFacultyId,
+          faculty_id: facultyId,
         }),
       });
 
@@ -144,9 +143,9 @@ export default function CourseDetailPage() {
         return;
       }
 
-      const data = await response.json();
       setAssignMessage('Faculty assigned successfully!');
-      setCourse({ ...course!, faculty_id: selectedFacultyId });
+      setCourse({ ...course!, faculty_id: facultyId });
+      setSelectedFacultyId(facultyId);
       setTimeout(() => setAssignMessage(null), 3000);
     } catch (err: any) {
       setAssignMessage(err.message || 'Failed to assign faculty');
