@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Student } from '@/lib/types';
-import ShareModal from '@/components/links/ShareModal';
+
 
 interface StudentListProps {
   onStudentSelect?: (student: Student) => void;
@@ -18,13 +18,7 @@ export const StudentList: React.FC<StudentListProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [shareModal, setShareModal] = useState<{ isOpen: boolean; studentId: string; studentName: string }>({
-    isOpen: false,
-    studentId: '',
-    studentName: '',
-  });
-  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);  const itemsPerPage = 10;
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -139,24 +133,6 @@ export const StudentList: React.FC<StudentListProps> = ({
                   >
                     View
                   </Link>
-                  <button
-                    onClick={() => onStudentSelect?.(student)}
-                    style={styles.actionButton}
-                  >
-                    Select
-                  </button>
-                  <button
-                    onClick={() =>
-                      setShareModal({
-                        isOpen: true,
-                        studentId: student.student_id?.toString() || '',
-                        studentName: `${student.first_name} ${student.last_name}`,
-                      })
-                    }
-                    style={{ ...styles.actionButton, backgroundColor: '#9b59b6', marginLeft: '5px' }}
-                  >
-                    Share
-                  </button>
                 </td>
               </tr>
             ))}
@@ -165,32 +141,11 @@ export const StudentList: React.FC<StudentListProps> = ({
       </div>
 
       <div style={styles.pagination}>
-        <button
-          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-          disabled={currentPage === 1}
-          style={styles.paginationButton}
-        >
-          Previous
-        </button>
         <span style={styles.pageInfo}>
           Page {currentPage} of {totalPages}
         </span>
-        <button
-          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-          disabled={currentPage === totalPages}
-          style={styles.paginationButton}
-        >
-          Next
-        </button>
       </div>
 
-      <ShareModal
-        isOpen={shareModal.isOpen}
-        onClose={() => setShareModal({ ...shareModal, isOpen: false })}
-        dataType="student"
-        dataId={shareModal.studentId}
-        dataName={shareModal.studentName}
-      />
     </div>
   );
 };

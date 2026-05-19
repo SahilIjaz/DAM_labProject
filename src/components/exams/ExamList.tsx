@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import ShareModal from '@/components/links/ShareModal';
+
 
 interface Exam {
   exam_id: number;
@@ -29,13 +29,7 @@ export const ExamList: React.FC<ExamListProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [shareModal, setShareModal] = useState<{ isOpen: boolean; examId: string; examName: string }>({
-    isOpen: false,
-    examId: '',
-    examName: '',
-  });
-  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchExams();
@@ -132,24 +126,6 @@ export const ExamList: React.FC<ExamListProps> = ({
                 <div style={styles.cell}>{exam.total_marks}</div>
                 <div style={styles.cell}>{exam.exam_type}</div>
                 <div style={styles.cell}>
-                  <button
-                    onClick={() => onExamSelect?.(exam)}
-                    style={styles.actionButton}
-                  >
-                    View
-                  </button>
-                  <button
-                    onClick={() =>
-                      setShareModal({
-                        isOpen: true,
-                        examId: exam.exam_id?.toString() || '',
-                        examName: exam.exam_name,
-                      })
-                    }
-                    style={{ ...styles.actionButton, backgroundColor: '#9b59b6', marginLeft: '5px' }}
-                  >
-                    Share
-                  </button>
                 </div>
               </div>
             ))}
@@ -158,16 +134,6 @@ export const ExamList: React.FC<ExamListProps> = ({
           {totalPages > 1 && (
             <div style={styles.pagination}>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  style={{
-                    ...styles.pageButton,
-                    ...(page === currentPage ? styles.pageButtonActive : {}),
-                  }}
-                >
-                  {page}
-                </button>
               ))}
             </div>
           )}

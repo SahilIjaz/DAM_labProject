@@ -1,17 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import ShareModal from '@/components/links/ShareModal';
+
 
 export function GradesList({ studentId }: { studentId: number }) {
   const [grades, setGrades] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [shareModal, setShareModal] = useState<{ isOpen: boolean; gradeId: string; gradeName: string }>({
-    isOpen: false,
-    gradeId: '',
-    gradeName: '',
-  });
-
   useEffect(() => {
     const fetchGrades = async () => {
       try {
@@ -51,39 +45,12 @@ export function GradesList({ studentId }: { studentId: number }) {
               <td style={{ padding: '10px', border: '1px solid #ddd' }}>{grade.percentage?.toFixed(2)}%</td>
               <td style={{ padding: '10px', border: '1px solid #ddd' }}>{new Date(grade.exam_date).toLocaleDateString()}</td>
               <td style={{ padding: '10px', border: '1px solid #ddd' }}>
-                <button
-                  onClick={() =>
-                    setShareModal({
-                      isOpen: true,
-                      gradeId: grade.result_id?.toString() || '',
-                      gradeName: `${grade.course_name} - ${grade.exam_type}`,
-                    })
-                  }
-                  style={{
-                    padding: '6px 12px',
-                    backgroundColor: '#9b59b6',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontSize: '12px',
-                  }}
-                >
-                  Share
-                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <ShareModal
-        isOpen={shareModal.isOpen}
-        onClose={() => setShareModal({ ...shareModal, isOpen: false })}
-        dataType="grade"
-        dataId={shareModal.gradeId}
-        dataName={shareModal.gradeName}
-      />
     </div>
   );
 }

@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Course } from '@/lib/types';
-import ShareModal from '@/components/links/ShareModal';
 
 interface CourseListProps {
   onCourseSelect?: (course: Course) => void;
@@ -24,11 +23,6 @@ export const CourseList: React.FC<CourseListProps> = ({
   const [user, setUser] = useState<any>(null);
   const [enrollingCourseId, setEnrollingCourseId] = useState<number | null>(null);
   const [enrollmentMessage, setEnrollmentMessage] = useState<string | null>(null);
-  const [shareModal, setShareModal] = useState<{ isOpen: boolean; courseId: string; courseName: string }>({
-    isOpen: false,
-    courseId: '',
-    courseName: '',
-  });
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -210,22 +204,6 @@ export const CourseList: React.FC<CourseListProps> = ({
               >
                 View Details
               </Link>
-              <button
-                onClick={() =>
-                  setShareModal({
-                    isOpen: true,
-                    courseId: course.course_id?.toString() || '',
-                    courseName: course.course_name || '',
-                  })
-                }
-                style={{
-                  ...styles.actionButton,
-                  backgroundColor: '#9b59b6',
-                  flex: 0.6,
-                }}
-              >
-                Share
-              </button>
               {user?.role_id === 7 && (
                 <button
                   onClick={() => handleSelectCourse(course)}
@@ -264,13 +242,6 @@ export const CourseList: React.FC<CourseListProps> = ({
         </button>
       </div>
 
-      <ShareModal
-        isOpen={shareModal.isOpen}
-        onClose={() => setShareModal({ ...shareModal, isOpen: false })}
-        dataType="course"
-        dataId={shareModal.courseId}
-        dataName={shareModal.courseName}
-      />
     </div>
   );
 };
