@@ -39,6 +39,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Create student record if role is student (7)
+    if ((roleId || 7) === 7) {
+      await callProcedure(
+        'sp_create_student',
+        [result.user_id, firstName, lastName],
+        1
+      ).catch((err) => console.error('Failed to create student record:', err));
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Registration successful',
