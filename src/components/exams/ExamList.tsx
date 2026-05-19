@@ -140,13 +140,6 @@ export const ExamList: React.FC<ExamListProps> = ({
         </>
       )}
 
-      <ShareModal
-        isOpen={shareModal.isOpen}
-        onClose={() => setShareModal({ ...shareModal, isOpen: false })}
-        dataType="exam"
-        dataId={shareModal.examId}
-        dataName={shareModal.examName}
-      />
     </div>
   );
 };
