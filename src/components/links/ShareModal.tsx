@@ -55,14 +55,15 @@ export default function ShareModal({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create share link');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create share link');
       }
 
       const data = await response.json();
       setShareUrl(data.share_url);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating share link:', error);
-      alert('Failed to create share link');
+      alert(error.message || 'Failed to create share link');
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,6 @@
-import redis from 'redis';
+import { createClient } from 'redis';
 
-const client = redis.createClient({
+const client = createClient({
   socket: {
     host: process.env.REDIS_HOST || 'localhost',
     port: parseInt(process.env.REDIS_PORT || '6379', 10),
@@ -14,6 +14,9 @@ client.on('connect', () => console.log('Redis Connected'));
 
 export async function cacheGet(key: string): Promise<string | null> {
   try {
+    if (!client.isOpen) {
+      return null; // Redis not connected, return null
+    }
     return await client.get(key);
   } catch (error) {
     console.error('Cache get error:', error);
@@ -27,6 +30,9 @@ export async function cacheSet(
   ttl: number = 3600
 ): Promise<void> {
   try {
+    if (!client.isOpen) {
+      return; // Redis not connected, skip caching
+    }
     await client.setEx(key, ttl, value);
   } catch (error) {
     console.error('Cache set error:', error);
@@ -75,16 +81,10 @@ export async function cacheSetJSON<T>(
   }
 }
 
-// Ensure client is connected on module load
-(async () => {
-  try {
-    if (!client.isOpen) {
-      await client.connect();
-    }
-  } catch (error) {
-    console.error('Redis connection error:', error);
-  }
-})();
+// Connect to Redis without blocking (fire and forget)
+client.connect().catch((error) => {
+  console.error('Redis connection error:', error);
+});
 
 export async function closeClient(): Promise<void> {
   if (client.isOpen) {
@@ -92,4 +92,3 @@ export async function closeClient(): Promise<void> {
   }
 }
 
-export default client;

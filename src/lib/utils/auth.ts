@@ -35,8 +35,7 @@ export function verifyToken(token: string): any {
 }
 
 export async function hashPassword(password: string): Promise<string> {
-  const salt = await bcryptjs.genSalt(10);
-  return bcryptjs.hash(password, salt);
+  return bcryptjs.hash(password, 10);
 }
 
 export async function comparePasswords(
