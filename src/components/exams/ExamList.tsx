@@ -134,6 +134,16 @@ export const ExamList: React.FC<ExamListProps> = ({
           {totalPages > 1 && (
             <div style={styles.pagination}>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  style={{
+                    ...styles.pageButton,
+                    ...(currentPage === page ? styles.pageButtonActive : {}),
+                  }}
+                >
+                  {page}
+                </button>
               ))}
             </div>
           )}
