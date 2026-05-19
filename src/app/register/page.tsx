@@ -164,7 +164,6 @@ export default function RegisterPage() {
             >
               <option value="7">Student</option>
               <option value="6">Instructor</option>
-              <option value="4">Faculty</option>
               <option value="8">Support Staff</option>
             </select>
           </div>
