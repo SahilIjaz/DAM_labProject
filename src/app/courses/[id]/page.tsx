@@ -18,6 +18,13 @@ interface Course {
   updated_at: string;
 }
 
+interface Faculty {
+  faculty_id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+}
+
 export default function CourseDetailPage() {
   const router = useRouter();
   const params = useParams();
@@ -30,6 +37,10 @@ export default function CourseDetailPage() {
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [enrolling, setEnrolling] = useState(false);
   const [enrollMessage, setEnrollMessage] = useState<string | null>(null);
+  const [faculty, setFaculty] = useState<Faculty[]>([]);
+  const [selectedFacultyId, setSelectedFacultyId] = useState<number | null>(null);
+  const [assigningFaculty, setAssigningFaculty] = useState(false);
+  const [assignMessage, setAssignMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
