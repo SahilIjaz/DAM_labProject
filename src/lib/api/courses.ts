@@ -52,33 +52,41 @@ export async function createCourse(
 
 export async function updateCourse(
   courseId: number,
-  courseName?: string,
-  capacity?: number,
-  creditHours?: number
-): Promise<void> {
+  updates: {
+    courseName?: string;
+    capacity?: number;
+    creditHours?: number;
+    faculty_id?: number | null;
+  }
+): Promise<Course | null> {
   let query = `UPDATE courses SET `;
   const params: any[] = [];
-  const updates: string[] = [];
+  const updatesList: string[] = [];
 
-  if (courseName) {
-    updates.push(`course_name = ?`);
-    params.push(courseName);
+  if (updates.courseName) {
+    updatesList.push(`course_name = ?`);
+    params.push(updates.courseName);
   }
-  if (capacity !== undefined) {
-    updates.push(`capacity = ?`);
-    params.push(capacity);
+  if (updates.capacity !== undefined) {
+    updatesList.push(`capacity = ?`);
+    params.push(updates.capacity);
   }
-  if (creditHours !== undefined) {
-    updates.push(`credit_hours = ?`);
-    params.push(creditHours);
+  if (updates.creditHours !== undefined) {
+    updatesList.push(`credit_hours = ?`);
+    params.push(updates.creditHours);
+  }
+  if (updates.faculty_id !== undefined) {
+    updatesList.push(`faculty_id = ?`);
+    params.push(updates.faculty_id);
   }
 
-  if (updates.length === 0) return;
+  if (updatesList.length === 0) return getCourseById(courseId);
 
-  query += updates.join(', ') + ` WHERE course_id = ?`;
+  query += updatesList.join(', ') + ` WHERE course_id = ?`;
   params.push(courseId);
 
   await executeQuery(query, params);
+  return getCourseById(courseId);
 }
 
 export async function deleteCourse(courseId: number): Promise<void> {

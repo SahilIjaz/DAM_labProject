@@ -137,11 +137,16 @@ export default function CourseDetailPage() {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        setAssignMessage(error.error || 'Failed to assign faculty');
+        try {
+          const error = await response.json();
+          setAssignMessage(error.error || 'Failed to assign faculty');
+        } catch {
+          setAssignMessage(`Failed to assign faculty (HTTP ${response.status})`);
+        }
         return;
       }
 
+      const data = await response.json();
       setAssignMessage('Faculty assigned successfully!');
       setCourse({ ...course!, faculty_id: selectedFacultyId });
       setTimeout(() => setAssignMessage(null), 3000);
