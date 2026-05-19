@@ -271,10 +271,28 @@ export default function CourseDetailPage() {
               <p style={styles.detailValue}>{course.semester}</p>
             </div>
 
-            <div style={styles.detailItem}>
-              <label style={styles.detailLabel}>Faculty ID</label>
-              <p style={styles.detailValue}>{course.faculty_id || 'Not assigned'}</p>
-            </div>
+            {user?.role_id === 8 || user?.role_id === 9 ? (
+              <div style={styles.detailItem}>
+                <label style={styles.detailLabel}>Faculty Assignment</label>
+                <select
+                  value={selectedFacultyId || ''}
+                  onChange={(e) => setSelectedFacultyId(e.target.value ? parseInt(e.target.value) : null)}
+                  style={styles.facultySelect}
+                >
+                  <option value="">Select a faculty member</option>
+                  {faculty.map((f) => (
+                    <option key={f.faculty_id} value={f.faculty_id}>
+                      {f.first_name} {f.last_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : (
+              <div style={styles.detailItem}>
+                <label style={styles.detailLabel}>Faculty ID</label>
+                <p style={styles.detailValue}>{course.faculty_id || 'Not assigned'}</p>
+              </div>
+            )}
 
             <div style={styles.detailItem}>
               <label style={styles.detailLabel}>Created At</label>
@@ -295,6 +313,35 @@ export default function CourseDetailPage() {
             <div style={styles.syllabusSection}>
               <h2 style={styles.sectionTitle}>Syllabus</h2>
               <p style={styles.syllabusText}>{course.syllabus}</p>
+            </div>
+          )}
+
+          {(user?.role_id === 8 || user?.role_id === 9) && (
+            <div style={styles.assignSection}>
+              {assignMessage && (
+                <div style={{
+                  padding: '12px',
+                  backgroundColor: assignMessage.includes('success') ? '#d4edda' : '#f8d7da',
+                  color: assignMessage.includes('success') ? '#155724' : '#721c24',
+                  borderRadius: '4px',
+                  marginBottom: '15px',
+                  fontSize: '14px',
+                }}>
+                  {assignMessage}
+                </div>
+              )}
+              <button
+                onClick={handleAssignFaculty}
+                disabled={assigningFaculty || !selectedFacultyId}
+                style={{
+                  ...styles.assignButton,
+                  backgroundColor: !selectedFacultyId ? '#95a5a6' : '#3498db',
+                  cursor: assigningFaculty || !selectedFacultyId ? 'not-allowed' : 'pointer',
+                  opacity: assigningFaculty || !selectedFacultyId ? 0.6 : 1,
+                }}
+              >
+                {assigningFaculty ? 'Assigning...' : 'Assign Faculty'}
+              </button>
             </div>
           )}
 
@@ -420,6 +467,30 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#721c24',
     borderRadius: '4px',
     marginBottom: '20px',
+  },
+  assignSection: {
+    marginTop: '30px',
+    paddingTop: '20px',
+    borderTop: '1px solid #ecf0f1',
+  },
+  assignButton: {
+    padding: '12px 30px',
+    backgroundColor: '#3498db',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    fontSize: '16px',
+    fontWeight: 'bold',
+  },
+  facultySelect: {
+    width: '100%',
+    padding: '10px',
+    border: '1px solid #bdc3c7',
+    borderRadius: '4px',
+    fontSize: '14px',
+    backgroundColor: 'white',
+    color: '#2c3e50',
+    boxSizing: 'border-box' as const,
   },
   enrollSection: {
     marginTop: '30px',
