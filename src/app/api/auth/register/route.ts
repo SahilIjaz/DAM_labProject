@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
 
     const username = email.split('@')[0];
     const hashedPassword = await hashPassword(password);
+    const finalRoleId = roleId || 7;
 
     const result = await callProcedure(
       'sp_create_user',
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
         hashedPassword,
         firstName,
         lastName,
-        roleId || 7,
+        finalRoleId,
         departmentId || null,
         campusId || 1,
       ],
@@ -37,6 +38,20 @@ export async function POST(request: NextRequest) {
         { error: result?.message || 'Registration failed' },
         { status: 400 }
       );
+    }
+
+    // Create faculty record if role is faculty (4, 5, 6)
+    if ([4, 5, 6].includes(finalRoleId) && departmentId) {
+      try {
+        await executeQuery(
+          `INSERT INTO faculty (user_id, department_id, status)
+           VALUES (?, ?, 'active')`,
+          [result.user_id, departmentId]
+        );
+      } catch (facultyError: any) {
+        console.warn('Failed to create faculty record:', facultyError.message);
+        // Don't fail registration if faculty record creation fails
+      }
     }
 
     return NextResponse.json({
