@@ -5,11 +5,13 @@ export async function getAllUsers(
   limit: number = 50,
   offset: number = 0
 ): Promise<User[]> {
+  const safeLimit = Math.max(1, Math.min(limit, 1000));
+  const safeOffset = Math.max(0, offset);
   const query = `
     SELECT * FROM users
-    LIMIT ? OFFSET ?
+    LIMIT ${safeLimit} OFFSET ${safeOffset}
   `;
-  return executeQuery<User>(query, [limit, offset]);
+  return executeQuery<User>(query);
 }
 
 export async function getUserById(userId: number): Promise<User | null> {

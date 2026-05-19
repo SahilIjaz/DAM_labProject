@@ -5,6 +5,8 @@ export async function getExamResults(
   limit: number = 50,
   offset: number = 0
 ): Promise<ExamResult[]> {
+  const safeLimit = Math.max(1, Math.min(limit, 1000));
+  const safeOffset = Math.max(0, offset);
   const query = `
     SELECT er.*, c.course_name, s.student_id, u.first_name, u.last_name
     FROM exam_results er
@@ -12,9 +14,9 @@ export async function getExamResults(
     JOIN courses c ON e.course_id = c.course_id
     JOIN students s ON e.student_id = s.student_id
     JOIN users u ON s.user_id = u.user_id
-    LIMIT ? OFFSET ?
+    LIMIT ${safeLimit} OFFSET ${safeOffset}
   `;
-  return executeQuery<ExamResult>(query, [limit, offset]);
+  return executeQuery<ExamResult>(query);
 }
 
 export async function getExamResultById(examResultId: number): Promise<ExamResult | null> {
