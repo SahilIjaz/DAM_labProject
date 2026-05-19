@@ -11,7 +11,7 @@ export async function getStudents(
     WHERE s.status = 'active'
     LIMIT ? OFFSET ?
   `;
-  return executeQuery<Student>(query, [limit, offset]);
+  return executeQuery<Student>(query, [Math.max(1, limit), Math.max(0, offset)]);
 }
 
 export async function getStudentById(studentId: number): Promise<Student | null> {
