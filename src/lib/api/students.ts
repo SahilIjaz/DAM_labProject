@@ -5,15 +5,17 @@ export async function getStudents(
   limit: number = 50,
   offset: number = 0
 ): Promise<Student[]> {
+  const safeLimit = Math.max(1, Math.min(limit, 1000));
+  const safeOffset = Math.max(0, offset);
   const query = `
     SELECT s.student_id, s.user_id, s.department_id, s.enrollment_id, s.gpa, s.current_semester, s.enrollment_date, s.status,
            u.username, u.email, u.first_name, u.last_name, u.role_id, u.department_id as user_department_id, u.campus_id, u.last_login, u.status as user_status
     FROM students s
     JOIN users u ON s.user_id = u.user_id
     WHERE s.status = 'active'
-    LIMIT ? OFFSET ?
+    LIMIT ${safeLimit} OFFSET ${safeOffset}
   `;
-  return executeQuery<Student>(query, [Math.max(1, limit), Math.max(0, offset)]);
+  return executeQuery<Student>(query);
 }
 
 export async function getStudentById(studentId: number): Promise<Student | null> {
