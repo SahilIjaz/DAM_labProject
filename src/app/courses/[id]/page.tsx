@@ -54,7 +54,10 @@ export default function CourseDetailPage() {
       fetchCourse();
       checkEnrollmentStatus();
     }
-  }, [courseId]);
+    if (user?.role_id === 8 || user?.role_id === 9) {
+      fetchFaculty();
+    }
+  }, [courseId, user]);
 
   const fetchCourse = async () => {
     try {
