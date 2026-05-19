@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import ShareModal from '@/components/links/ShareModal';
 
 interface Exam {
   exam_id: number;
@@ -29,6 +30,11 @@ export const ExamList: React.FC<ExamListProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [shareModal, setShareModal] = useState<{ isOpen: boolean; examId: string; examName: string }>({
+    isOpen: false,
+    examId: '',
+    examName: '',
+  });
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -132,6 +138,18 @@ export const ExamList: React.FC<ExamListProps> = ({
                   >
                     View
                   </button>
+                  <button
+                    onClick={() =>
+                      setShareModal({
+                        isOpen: true,
+                        examId: exam.exam_id?.toString() || '',
+                        examName: exam.exam_name,
+                      })
+                    }
+                    style={{ ...styles.actionButton, backgroundColor: '#9b59b6', marginLeft: '5px' }}
+                  >
+                    Share
+                  </button>
                 </div>
               </div>
             ))}
@@ -155,6 +173,14 @@ export const ExamList: React.FC<ExamListProps> = ({
           )}
         </>
       )}
+
+      <ShareModal
+        isOpen={shareModal.isOpen}
+        onClose={() => setShareModal({ ...shareModal, isOpen: false })}
+        dataType="exam"
+        dataId={shareModal.examId}
+        dataName={shareModal.examName}
+      />
     </div>
   );
 };
