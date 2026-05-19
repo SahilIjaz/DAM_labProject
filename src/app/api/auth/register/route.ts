@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { hashPassword } from '@/lib/utils/auth';
-import { callProcedure } from '@/lib/db/mysql';
+import { callProcedure, executeQuery } from '@/lib/db/mysql';
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,11 +41,14 @@ export async function POST(request: NextRequest) {
 
     // Create student record if role is student (7)
     if ((roleId || 7) === 7) {
-      await callProcedure(
-        'sp_create_student',
-        [result.user_id, firstName, lastName],
-        1
-      ).catch((err) => console.error('Failed to create student record:', err));
+      try {
+        await executeQuery(
+          'INSERT INTO students (user_id, first_name, last_name, enrollment_date) VALUES (?, ?, ?, NOW())',
+          [result.user_id, firstName, lastName]
+        );
+      } catch (err: any) {
+        console.error('Failed to create student record:', err);
+      }
     }
 
     return NextResponse.json({
