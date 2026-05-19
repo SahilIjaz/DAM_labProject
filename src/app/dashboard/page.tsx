@@ -206,9 +206,12 @@ export default function DashboardPage() {
                   <Link href="/courses" style={styles.quickLink}>
                     View Courses
                   </Link>
+                  <Link href="/faculty" style={styles.quickLink}>
+                    View Instructors
+                  </Link>
                 </div>
                 <p style={{ marginTop: '20px', color: '#7f8c8d' }}>
-                  You have limited access to view system data.
+                  You can view students, courses, and instructors in the system.
                 </p>
               </>
             )}
