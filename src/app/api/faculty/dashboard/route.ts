@@ -20,8 +20,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Faculty record not found' }, { status: 404 });
     }
 
-    // Fetch dashboard data only for this instructor
-    const dashboardData = await getFacultyDashboardData(faculty.department_id, user.user_id);
+    // Fetch dashboard data for the faculty's department
+    const dashboardData = await getFacultyDashboardData(faculty.department_id);
 
     return NextResponse.json({
       data: dashboardData,

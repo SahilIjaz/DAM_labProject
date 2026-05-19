@@ -13,15 +13,6 @@ interface FacultyDashboardData {
     department_name: string;
     enrolled_students: number;
   }>;
-  instructors: Array<{
-    faculty_id: number;
-    user_id: number;
-    first_name: string;
-    last_name: string;
-    email: string;
-    specialization: string;
-    courses_taught: number;
-  }>;
   students: Array<{
     student_id: number;
     user_id: number;
