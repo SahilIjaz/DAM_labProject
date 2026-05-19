@@ -204,17 +204,19 @@ export const CourseList: React.FC<CourseListProps> = ({
               >
                 View Details
               </Link>
-              <button
-                onClick={() => handleSelectCourse(course)}
-                disabled={enrollingCourseId === course.course_id}
-                style={{
-                  ...styles.actionButton,
-                  opacity: enrollingCourseId === course.course_id ? 0.6 : 1,
-                  cursor: enrollingCourseId === course.course_id ? 'not-allowed' : 'pointer',
-                }}
-              >
-                {enrollingCourseId === course.course_id ? 'Enrolling...' : 'Select'}
-              </button>
+              {user?.role_id === 7 && (
+                <button
+                  onClick={() => handleSelectCourse(course)}
+                  disabled={enrollingCourseId === course.course_id}
+                  style={{
+                    ...styles.actionButton,
+                    opacity: enrollingCourseId === course.course_id ? 0.6 : 1,
+                    cursor: enrollingCourseId === course.course_id ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {enrollingCourseId === course.course_id ? 'Enrolling...' : 'Select'}
+                </button>
+              )}
             </div>
           </div>
         ))}
