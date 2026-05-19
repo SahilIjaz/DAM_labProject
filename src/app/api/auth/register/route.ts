@@ -39,18 +39,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create student record if role is student (7)
-    if ((roleId || 7) === 7) {
-      try {
-        await executeQuery(
-          'INSERT INTO students (user_id, first_name, last_name, enrollment_date) VALUES (?, ?, ?, NOW())',
-          [result.user_id, firstName, lastName]
-        );
-      } catch (err: any) {
-        console.error('Failed to create student record:', err);
-      }
-    }
-
     return NextResponse.json({
       success: true,
       message: 'Registration successful',

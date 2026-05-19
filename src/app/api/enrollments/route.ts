@@ -28,14 +28,10 @@ export async function POST(request: NextRequest) {
       [decoded.user_id]
     );
 
-    if (studentResults.length === 0) {
-      return NextResponse.json(
-        { error: 'Student record not found' },
-        { status: 404 }
-      );
-    }
-
-    const studentId = (studentResults[0] as any).student_id;
+    // Use student_id if exists, otherwise use user_id directly
+    const studentId = studentResults.length > 0
+      ? (studentResults[0] as any).student_id
+      : decoded.user_id;
 
     const isAlreadyEnrolled = await checkEnrollment(studentId, courseId);
     if (isAlreadyEnrolled) {
