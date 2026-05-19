@@ -23,7 +23,13 @@ export default function DashboardPage() {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const userData = JSON.parse(storedUser);
+      setUser(userData);
+      // Redirect faculty members to faculty dashboard
+      if ([4, 5, 6].includes(userData?.role_id)) {
+        window.location.href = '/faculty/dashboard';
+        return;
+      }
     }
     if (isAdminRole(storedUser ? JSON.parse(storedUser) : null)) {
       fetchStats();

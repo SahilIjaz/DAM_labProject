@@ -85,3 +85,48 @@ export async function getFacultyWorkload(departmentId: number): Promise<any[]> {
   `;
   return executeQuery(query, [departmentId]);
 }
+
+export async function getFacultyDashboardData(departmentId: number): Promise<any> {
+  const coursesQuery = `
+    SELECT c.course_id, c.course_code, c.course_name, c.credit_hours as credits, c.department_id,
+           d.dept_name as department_name, COUNT(CASE WHEN e.status = 'enrolled' THEN 1 END) as enrolled_students
+    FROM courses c
+    LEFT JOIN departments d ON c.department_id = d.department_id
+    LEFT JOIN enrollments e ON c.course_id = e.course_id
+    WHERE c.department_id = ?
+    GROUP BY c.course_id, c.course_code, c.course_name, c.credit_hours, c.department_id, d.dept_name
+  `;
+
+  const instructorsQuery = `
+    SELECT DISTINCT f.faculty_id, u.user_id, u.first_name, u.last_name, u.email,
+           f.specialization, COUNT(DISTINCT c.course_id) as courses_taught
+    FROM faculty f
+    JOIN users u ON f.user_id = u.user_id
+    LEFT JOIN courses c ON c.faculty_id = f.faculty_id
+    WHERE f.department_id = ?
+    GROUP BY f.faculty_id, u.user_id, u.first_name, u.last_name, u.email, f.specialization
+  `;
+
+  const studentsQuery = `
+    SELECT DISTINCT s.student_id, u.user_id, u.first_name, u.last_name, u.email,
+           s.enrollment_id, s.gpa, s.status,
+           COUNT(DISTINCT e.course_id) as enrolled_courses
+    FROM students s
+    JOIN users u ON s.user_id = u.user_id
+    LEFT JOIN enrollments e ON s.student_id = e.student_id
+    WHERE s.department_id = ?
+    GROUP BY s.student_id, u.user_id, u.first_name, u.last_name, u.email, s.enrollment_id, s.gpa, s.status
+    ORDER BY u.first_name
+  `;
+
+  const courses = await executeQuery(coursesQuery, [departmentId]);
+  const instructors = await executeQuery(instructorsQuery, [departmentId]);
+  const students = await executeQuery(studentsQuery, [departmentId]);
+
+  return {
+    courses,
+    instructors,
+    students,
+    department_id: departmentId,
+  };
+}
