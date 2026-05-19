@@ -54,9 +54,7 @@ export default function CourseDetailPage() {
       fetchCourse();
       checkEnrollmentStatus();
     }
-    if (user?.role_id === 8 || user?.role_id === 9) {
-      fetchFaculty();
-    }
+    fetchFaculty();
   }, [courseId, user]);
 
   const fetchCourse = async () => {
@@ -276,9 +274,9 @@ export default function CourseDetailPage() {
               <p style={styles.detailValue}>{course.semester}</p>
             </div>
 
-            {user?.role_id === 8 || user?.role_id === 9 ? (
-              <div style={styles.detailItem}>
-                <label style={styles.detailLabel}>Faculty Assignment</label>
+            <div style={styles.detailItem}>
+              <label style={styles.detailLabel}>Faculty Assignment</label>
+              {user?.role_id === 8 || user?.role_id === 9 ? (
                 <select
                   value={selectedFacultyId || ''}
                   onChange={(e) => setSelectedFacultyId(e.target.value ? parseInt(e.target.value) : null)}
@@ -291,13 +289,16 @@ export default function CourseDetailPage() {
                     </option>
                   ))}
                 </select>
-              </div>
-            ) : (
-              <div style={styles.detailItem}>
-                <label style={styles.detailLabel}>Faculty ID</label>
-                <p style={styles.detailValue}>{course.faculty_id || 'Not assigned'}</p>
-              </div>
-            )}
+              ) : (
+                <p style={styles.detailValue}>
+                  {course.faculty_id
+                    ? faculty.find((f) => f.faculty_id === course.faculty_id)
+                      ? `${faculty.find((f) => f.faculty_id === course.faculty_id)?.first_name} ${faculty.find((f) => f.faculty_id === course.faculty_id)?.last_name}`
+                      : `Faculty ID: ${course.faculty_id}`
+                    : 'Not assigned'}
+                </p>
+              )}
+            </div>
 
             <div style={styles.detailItem}>
               <label style={styles.detailLabel}>Created At</label>
