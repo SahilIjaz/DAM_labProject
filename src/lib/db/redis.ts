@@ -94,3 +94,6 @@ export async function closeClient(): Promise<void> {
   }
 }
 
+export { client };
+
+
