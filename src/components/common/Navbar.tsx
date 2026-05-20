@@ -19,6 +19,10 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
     return roleId === 1 || roleId === 2 || roleId === 3;
   };
 
+  const isStaffRole = (roleId: number) => {
+    return roleId === 1 || roleId === 2 || roleId === 3 || roleId === 4 || roleId === 5 || roleId === 6 || roleId === 8;
+  };
+
   const getRoleName = (roleId: number) => {
     const roles: Record<number, string> = {
       1: 'Super Admin',
@@ -68,6 +72,11 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
                 Exams
               </Link>
             </>
+          )}
+          {user && isStaffRole(user.role_id) && (
+            <Link href="/analytics" style={navbarStyles.link}>
+              📊 Analytics
+            </Link>
           )}
         </div>
 
