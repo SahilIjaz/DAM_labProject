@@ -200,9 +200,36 @@ export default function AnalyticsPage() {
                     <tr key={idx}>
                       <td>{perf.first_name} {perf.last_name}</td>
                       <td>{perf.course_name}</td>
-                      <td>{perf.obtained_marks}</td>
-                      <td>{perf.total_marks}</td>
-                      <td style={{ fontWeight: 'bold' }}>{perf.percentage}%</td>
+                      <td>{perf.obtained_marks || '-'}</td>
+                      <td>{perf.total_marks || '-'}</td>
+                      <td style={{ fontWeight: 'bold' }}>{perf.percentage ? `${perf.percentage}%` : '-'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Faculty Workload */}
+        {data?.facultyWorkload && (
+          <div style={styles.card}>
+            <h2 style={styles.cardTitle}>Faculty Workload</h2>
+            <div style={styles.tableContainer}>
+              <table style={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Faculty Name</th>
+                    <th>Courses Assigned</th>
+                    <th>Total Students</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.facultyWorkload.slice(0, 10).map((faculty: any, idx: number) => (
+                    <tr key={idx}>
+                      <td>{faculty.first_name} {faculty.last_name}</td>
+                      <td>{faculty.courses_assigned}</td>
+                      <td>{faculty.total_students}</td>
                     </tr>
                   ))}
                 </tbody>

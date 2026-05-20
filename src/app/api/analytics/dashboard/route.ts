@@ -43,15 +43,18 @@ export async function GET(request: NextRequest) {
     // Student Performance Analytics
     const performanceQuery = `
       SELECT
-        s.student_id,
-        CONCAT(s.first_name, ' ', s.last_name) as student_name,
+        u.first_name,
+        u.last_name,
         c.course_name,
-        COUNT(DISTINCT e.enrollment_id) as courses_enrolled
+        er.marks_obtained as obtained_marks,
+        er.total_marks,
+        er.percentage
       FROM students s
-      LEFT JOIN enrollments e ON s.student_id = e.student_id
-      LEFT JOIN courses c ON e.course_id = c.course_id
-      GROUP BY s.student_id, s.first_name, s.last_name, c.course_name
-      LIMIT 15
+      JOIN users u ON s.user_id = u.user_id
+      JOIN enrollments e ON s.student_id = e.student_id
+      JOIN courses c ON e.course_id = c.course_id
+      LEFT JOIN exam_results er ON e.enrollment_id = er.enrollment_id
+      LIMIT 10
     `;
 
     const performanceData = await executeQuery(performanceQuery);
@@ -60,13 +63,15 @@ export async function GET(request: NextRequest) {
     const facultyQuery = `
       SELECT
         f.faculty_id,
-        CONCAT(f.first_name, ' ', f.last_name) as faculty_name,
+        u.first_name,
+        u.last_name,
         COUNT(DISTINCT c.course_id) as courses_assigned,
         COUNT(DISTINCT e.enrollment_id) as total_students
       FROM faculty f
+      JOIN users u ON f.user_id = u.user_id
       LEFT JOIN courses c ON f.faculty_id = c.faculty_id
       LEFT JOIN enrollments e ON c.course_id = e.course_id
-      GROUP BY f.faculty_id, f.first_name, f.last_name
+      GROUP BY f.faculty_id, u.first_name, u.last_name
       ORDER BY courses_assigned DESC
       LIMIT 10
     `;
