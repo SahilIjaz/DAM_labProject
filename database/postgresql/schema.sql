@@ -1,18 +1,11 @@
--- PostgreSQL Schema for Analytics, Logs, and Audit Trails
--- Database: university_analytics
+
 
 CREATE DATABASE IF NOT EXISTS university_analytics;
 
--- Connect to the analytics database
 \c university_analytics
 
--- Enable required extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pg_stat_statements";
-
--- ============================================================================
--- AUDIT AND COMPLIANCE TABLES
--- ============================================================================
 
 CREATE TABLE IF NOT EXISTS audit_logs (
     log_id BIGSERIAL PRIMARY KEY,
@@ -33,10 +26,6 @@ CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON audit_logs(timestamp);
 CREATE INDEX IF NOT EXISTS idx_audit_action ON audit_logs(action);
 CREATE INDEX IF NOT EXISTS idx_audit_table ON audit_logs(table_name);
 
--- ============================================================================
--- SYSTEM AND PERFORMANCE LOGS
--- ============================================================================
-
 CREATE TABLE IF NOT EXISTS system_logs (
     log_id BIGSERIAL PRIMARY KEY,
     log_level VARCHAR(20),
@@ -50,10 +39,6 @@ CREATE TABLE IF NOT EXISTS system_logs (
 CREATE INDEX IF NOT EXISTS idx_system_timestamp ON system_logs(timestamp);
 CREATE INDEX IF NOT EXISTS idx_system_component ON system_logs(component);
 CREATE INDEX IF NOT EXISTS idx_system_log_level ON system_logs(log_level);
-
--- ============================================================================
--- API REQUEST LOGS
--- ============================================================================
 
 CREATE TABLE IF NOT EXISTS api_request_logs (
     request_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -75,10 +60,6 @@ CREATE INDEX IF NOT EXISTS idx_api_endpoint ON api_request_logs(endpoint);
 CREATE INDEX IF NOT EXISTS idx_api_timestamp ON api_request_logs(timestamp);
 CREATE INDEX IF NOT EXISTS idx_api_status_code ON api_request_logs(status_code);
 
--- ============================================================================
--- DATABASE PERFORMANCE METRICS
--- ============================================================================
-
 CREATE TABLE IF NOT EXISTS db_performance_metrics (
     metric_id BIGSERIAL PRIMARY KEY,
     database_name VARCHAR(100),
@@ -90,10 +71,6 @@ CREATE TABLE IF NOT EXISTS db_performance_metrics (
 
 CREATE INDEX IF NOT EXISTS idx_db_metrics_table ON db_performance_metrics(table_name);
 CREATE INDEX IF NOT EXISTS idx_db_metrics_timestamp ON db_performance_metrics(recorded_at);
-
--- ============================================================================
--- BACKUP AND RESTORE LOGS
--- ============================================================================
 
 CREATE TABLE IF NOT EXISTS backup_logs (
     backup_id BIGSERIAL PRIMARY KEY,
@@ -115,10 +92,6 @@ CREATE INDEX IF NOT EXISTS idx_backup_date ON backup_logs(backup_start);
 CREATE INDEX IF NOT EXISTS idx_backup_status ON backup_logs(status);
 CREATE INDEX IF NOT EXISTS idx_backup_source ON backup_logs(source_database);
 
--- ============================================================================
--- USER ACTIVITY ANALYTICS
--- ============================================================================
-
 CREATE TABLE IF NOT EXISTS user_activity_analytics (
     activity_id BIGSERIAL PRIMARY KEY,
     user_id INTEGER,
@@ -133,10 +106,6 @@ CREATE TABLE IF NOT EXISTS user_activity_analytics (
 CREATE INDEX IF NOT EXISTS idx_activity_user ON user_activity_analytics(user_id);
 CREATE INDEX IF NOT EXISTS idx_activity_timestamp ON user_activity_analytics(timestamp);
 CREATE INDEX IF NOT EXISTS idx_activity_type ON user_activity_analytics(action_type);
-
--- ============================================================================
--- REPLICATION STATUS MONITORING
--- ============================================================================
 
 CREATE TABLE IF NOT EXISTS replication_status (
     status_id BIGSERIAL PRIMARY KEY,
@@ -153,10 +122,6 @@ CREATE TABLE IF NOT EXISTS replication_status (
 CREATE INDEX IF NOT EXISTS idx_replication_replica ON replication_status(replica_server);
 CREATE INDEX IF NOT EXISTS idx_replication_checked ON replication_status(checked_at);
 
--- ============================================================================
--- DATA QUALITY METRICS
--- ============================================================================
-
 CREATE TABLE IF NOT EXISTS data_quality_metrics (
     metric_id BIGSERIAL PRIMARY KEY,
     table_name VARCHAR(100),
@@ -170,10 +135,6 @@ CREATE TABLE IF NOT EXISTS data_quality_metrics (
 
 CREATE INDEX IF NOT EXISTS idx_quality_table ON data_quality_metrics(table_name);
 CREATE INDEX IF NOT EXISTS idx_quality_checked ON data_quality_metrics(last_checked);
-
--- ============================================================================
--- SYSTEM EVENTS AND ALERTS
--- ============================================================================
 
 CREATE TABLE IF NOT EXISTS system_events (
     event_id BIGSERIAL PRIMARY KEY,
@@ -190,10 +151,6 @@ CREATE INDEX IF NOT EXISTS idx_events_type ON system_events(event_type);
 CREATE INDEX IF NOT EXISTS idx_events_severity ON system_events(severity);
 CREATE INDEX IF NOT EXISTS idx_events_created ON system_events(created_at);
 
--- ============================================================================
--- DISASTER RECOVERY TRACKING
--- ============================================================================
-
 CREATE TABLE IF NOT EXISTS disaster_recovery_events (
     dr_event_id BIGSERIAL PRIMARY KEY,
     event_type VARCHAR(50),
@@ -209,10 +166,6 @@ CREATE TABLE IF NOT EXISTS disaster_recovery_events (
 
 CREATE INDEX IF NOT EXISTS idx_dr_initiated ON disaster_recovery_events(initiated_at);
 CREATE INDEX IF NOT EXISTS idx_dr_status ON disaster_recovery_events(status);
-
--- ============================================================================
--- STUDENT ACADEMIC ANALYTICS
--- ============================================================================
 
 CREATE TABLE IF NOT EXISTS student_performance_analytics (
     analytics_id BIGSERIAL PRIMARY KEY,
@@ -231,10 +184,6 @@ CREATE TABLE IF NOT EXISTS student_performance_analytics (
 CREATE INDEX IF NOT EXISTS idx_student_perf_id ON student_performance_analytics(student_id);
 CREATE INDEX IF NOT EXISTS idx_student_perf_semester ON student_performance_analytics(semester);
 
--- ============================================================================
--- COURSE PERFORMANCE ANALYTICS
--- ============================================================================
-
 CREATE TABLE IF NOT EXISTS course_performance_analytics (
     analytics_id BIGSERIAL PRIMARY KEY,
     course_id INTEGER,
@@ -251,10 +200,6 @@ CREATE TABLE IF NOT EXISTS course_performance_analytics (
 CREATE INDEX IF NOT EXISTS idx_course_perf_id ON course_performance_analytics(course_id);
 CREATE INDEX IF NOT EXISTS idx_course_perf_semester ON course_performance_analytics(semester);
 
--- ============================================================================
--- FACULTY PERFORMANCE ANALYTICS
--- ============================================================================
-
 CREATE TABLE IF NOT EXISTS faculty_performance_analytics (
     analytics_id BIGSERIAL PRIMARY KEY,
     faculty_id INTEGER,
@@ -268,10 +213,6 @@ CREATE TABLE IF NOT EXISTS faculty_performance_analytics (
 );
 
 CREATE INDEX IF NOT EXISTS idx_faculty_perf_id ON faculty_performance_analytics(faculty_id);
-
--- ============================================================================
--- VIEWS FOR ANALYTICS
--- ============================================================================
 
 CREATE OR REPLACE VIEW v_audit_summary AS
 SELECT

@@ -81,7 +81,7 @@ export default function FacultyDashboardPage() {
           <div style={styles.loadingContainer}>Loading dashboard...</div>
         ) : (
           <>
-            {/* Courses Section */}
+            {}
             <div style={styles.section}>
               <h2 style={styles.sectionTitle}>Department Courses</h2>
               {data?.courses && data.courses.length > 0 ? (
@@ -108,7 +108,7 @@ export default function FacultyDashboardPage() {
               )}
             </div>
 
-            {/* Students Section */}
+            {}
             <div style={styles.section}>
               <h2 style={styles.sectionTitle}>Department Students</h2>
               {data?.students && data.students.length > 0 ? (

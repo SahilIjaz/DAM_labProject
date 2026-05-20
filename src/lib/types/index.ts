@@ -1,4 +1,4 @@
-// Core Type Definitions for University Management System
+
 
 export interface User {
   user_id: number;

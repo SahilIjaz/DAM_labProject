@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // System Health Stats
+
     const statsQuery = `
       SELECT
         (SELECT COUNT(*) FROM students) as total_students,
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
 
     const stats = await executeQuery(statsQuery);
 
-    // Course Enrollment Analytics
+
     const enrollmentQuery = `
       SELECT
         c.course_id,
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
 
     const enrollmentData = await executeQuery(enrollmentQuery);
 
-    // Student Performance Analytics
+
     const performanceQuery = `
       SELECT
         u.first_name,
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
 
     const performanceData = await executeQuery(performanceQuery);
 
-    // Faculty Workload
+
     const facultyQuery = `
       SELECT
         f.faculty_id,

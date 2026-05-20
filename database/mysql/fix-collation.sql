@@ -1,12 +1,9 @@
--- Fix collation mismatch issue
--- Convert all tables to use utf8mb4_general_ci for better compatibility
+
 
 USE university_main;
 
--- Alter database collation
 ALTER DATABASE university_main CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
--- Alter all tables to use consistent collation
 ALTER TABLE roles CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 ALTER TABLE permissions CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 ALTER TABLE role_permissions CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;

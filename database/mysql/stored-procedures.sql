@@ -1,10 +1,7 @@
--- Stored Procedures for University Management System
+
 
 USE university_main;
 
--- ============================================================================
--- SP1: Create New User with Role Assignment
--- ============================================================================
 DELIMITER $$
 CREATE PROCEDURE IF NOT EXISTS sp_create_user(
     IN p_username VARCHAR(255),
@@ -46,9 +43,6 @@ BEGIN
 END$$
 DELIMITER ;
 
--- ============================================================================
--- SP2: Enroll Student in Course
--- ============================================================================
 DELIMITER $$
 CREATE PROCEDURE IF NOT EXISTS sp_enroll_student(
     IN p_student_id INT,
@@ -93,9 +87,6 @@ BEGIN
 END$$
 DELIMITER ;
 
--- ============================================================================
--- SP3: Validate Credentials
--- ============================================================================
 DELIMITER $$
 CREATE PROCEDURE IF NOT EXISTS sp_validate_credentials(
     IN p_email VARCHAR(255),
@@ -129,9 +120,6 @@ BEGIN
 END$$
 DELIMITER ;
 
--- ============================================================================
--- SP4: Update Exam Results with Transaction
--- ============================================================================
 DELIMITER $$
 CREATE PROCEDURE IF NOT EXISTS sp_update_exam_result(
     IN p_enrollment_id INT,
@@ -179,9 +167,6 @@ BEGIN
 END$$
 DELIMITER ;
 
--- ============================================================================
--- SP5: Delete Student (with validation)
--- ============================================================================
 DELIMITER $$
 CREATE PROCEDURE IF NOT EXISTS sp_delete_student(
     IN p_student_id INT,
@@ -217,9 +202,6 @@ BEGIN
 END$$
 DELIMITER ;
 
--- ============================================================================
--- SP6: Generate Sequential Enrollment ID
--- ============================================================================
 DELIMITER $$
 CREATE PROCEDURE IF NOT EXISTS sp_generate_enrollment_id(
     OUT p_enrollment_id VARCHAR(50)
@@ -246,9 +228,6 @@ BEGIN
 END$$
 DELIMITER ;
 
--- ============================================================================
--- SP7: Bulk Update Grades with Cursor
--- ============================================================================
 DELIMITER $$
 CREATE PROCEDURE IF NOT EXISTS sp_bulk_update_grades(
     IN p_semester INT
@@ -297,9 +276,6 @@ BEGIN
 END$$
 DELIMITER ;
 
--- ============================================================================
--- SP8: Transfer Student Between Departments
--- ============================================================================
 DELIMITER $$
 CREATE PROCEDURE IF NOT EXISTS sp_transfer_student(
     IN p_student_id INT,

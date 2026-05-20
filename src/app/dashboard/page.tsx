@@ -25,7 +25,7 @@ export default function DashboardPage() {
     if (storedUser) {
       const userData = JSON.parse(storedUser);
       setUser(userData);
-      // Redirect faculty members to faculty dashboard
+
       if ([4, 5, 6].includes(userData?.role_id)) {
         window.location.href = '/faculty/dashboard';
         return;

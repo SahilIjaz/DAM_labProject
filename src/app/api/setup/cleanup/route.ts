@@ -3,10 +3,10 @@ import { executeQuery } from '@/lib/db/mysql';
 
 export async function POST(request: NextRequest) {
   try {
-    // Delete all exams
+
     await executeQuery('DELETE FROM exams', []);
 
-    // Delete sample courses
+
     await executeQuery(
       'DELETE FROM courses WHERE course_code IN (?, ?, ?, ?)',
       ['MATH101', 'PHYS101', 'CHEM101', 'ENG101']

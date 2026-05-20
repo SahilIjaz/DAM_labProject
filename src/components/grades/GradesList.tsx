@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 
-
 export function GradesList({ studentId }: { studentId: number }) {
   const [grades, setGrades] = useState([]);
   const [loading, setLoading] = useState(true);

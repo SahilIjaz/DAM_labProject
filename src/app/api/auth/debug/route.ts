@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Fetch user from database
+
     const userQuery = `SELECT * FROM users WHERE email = ?`;
     const userResults = await executeQuery(userQuery, [email]);
 
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     const user = userResults[0];
     const storedHash = user.password_hash;
 
-    // Log details about the stored hash
+
     const hashInfo = {
       email: user.email,
       hashExists: !!storedHash,
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       hashSample: storedHash ? storedHash.substring(0, 20) + '...' : null,
     };
 
-    // Test password comparison
+
     let comparisonResult = null;
     let comparisonError = null;
     try {
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       comparisonError = error.message;
     }
 
-    // Test hashing the input password
+
     let hashedInputPassword = null;
     try {
       hashedInputPassword = await hashPassword(password);

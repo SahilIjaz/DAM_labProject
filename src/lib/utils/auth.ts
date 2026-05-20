@@ -65,7 +65,7 @@ export function decodeToken(token: string): any {
 }
 
 function calculateExpiresIn(expireString: string): number {
-  if (!expireString) return 604800; // 7 days in seconds
+  if (!expireString) return 604800;
 
   const timeUnits: Record<string, number> = {
     d: 86400,

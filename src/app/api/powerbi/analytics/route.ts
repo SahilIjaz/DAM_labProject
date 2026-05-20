@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Student performance analytics
+
     const performanceQuery = `
       SELECT
         s.student_id,
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 
     const performanceData = await executeQuery(performanceQuery);
 
-    // Course enrollment analytics
+
     const enrollmentQuery = `
       SELECT
         c.course_id,
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
 
     const enrollmentData = await executeQuery(enrollmentQuery);
 
-    // API performance metrics
+
     const apiMetricsQuery = `
       SELECT
         endpoint,
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
 
     const apiMetrics = await executeQuery(apiMetricsQuery);
 
-    // System health
+
     const healthQuery = `
       SELECT
         'total_students' as metric,

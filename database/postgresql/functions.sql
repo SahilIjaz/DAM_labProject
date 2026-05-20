@@ -1,8 +1,5 @@
--- PostgreSQL Functions for Advanced Analytics
 
--- ============================================================================
--- PG Function 1: Calculate Student Performance Score
--- ============================================================================
+
 CREATE OR REPLACE FUNCTION fn_calculate_student_score(p_student_id INT)
 RETURNS NUMERIC AS $$
 DECLARE
@@ -29,9 +26,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 
--- ============================================================================
--- PG Function 2: Detect Data Anomalies
--- ============================================================================
 CREATE OR REPLACE FUNCTION fn_detect_anomalies()
 RETURNS TABLE (
     anomaly_type VARCHAR,
@@ -41,7 +35,7 @@ RETURNS TABLE (
     detected_at TIMESTAMPTZ
 ) AS $$
 BEGIN
-    -- Check for duplicate records in audit logs (simulate with PostgreSQL data)
+
     RETURN QUERY
     SELECT
         'Duplicate_Records'::VARCHAR,
@@ -54,7 +48,7 @@ BEGIN
     HAVING COUNT(*) > 1
     LIMIT 10;
 
-    -- Check for missing data quality metrics
+
     RETURN QUERY
     SELECT
         'Missing_Metrics'::VARCHAR,
@@ -68,9 +62,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- ============================================================================
--- PG Function 3: Generate Performance Report
--- ============================================================================
 CREATE OR REPLACE FUNCTION fn_generate_performance_report(p_semester INT)
 RETURNS TABLE (
     student_id INTEGER,
@@ -101,9 +92,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- ============================================================================
--- PG Function 4: Monitor Replication Lag
--- ============================================================================
 CREATE OR REPLACE FUNCTION fn_monitor_replication_lag()
 RETURNS TABLE (
     primary_server VARCHAR,
@@ -126,9 +114,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- ============================================================================
--- PG Function 5: Calculate Data Quality Score
--- ============================================================================
 CREATE OR REPLACE FUNCTION fn_calculate_data_quality_score(p_table_name VARCHAR)
 RETURNS NUMERIC AS $$
 DECLARE
@@ -138,7 +123,7 @@ DECLARE
     v_integrity_violations INT;
     v_quality_score NUMERIC;
 BEGIN
-    -- For this demo, we'll calculate based on stored metrics
+
     SELECT
         total_records,
         duplicate_records,
@@ -167,9 +152,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- ============================================================================
--- PG Function 6: Get API Performance Metrics
--- ============================================================================
 CREATE OR REPLACE FUNCTION fn_get_api_performance_metrics(p_hours INT DEFAULT 24)
 RETURNS TABLE (
     endpoint VARCHAR,
@@ -195,9 +177,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- ============================================================================
--- PG Function 7: System Health Check
--- ============================================================================
 CREATE OR REPLACE FUNCTION fn_system_health_check()
 RETURNS TABLE (
     check_name VARCHAR,
@@ -206,7 +185,7 @@ RETURNS TABLE (
     last_checked TIMESTAMPTZ
 ) AS $$
 BEGIN
-    -- Check replication status
+
     RETURN QUERY
     SELECT
         'Replication Status'::VARCHAR,
@@ -216,7 +195,7 @@ BEGIN
     FROM replication_status
     WHERE replication_lag_ms > 1000;
 
-    -- Check backup status
+
     RETURN QUERY
     SELECT
         'Recent Backups'::VARCHAR,
@@ -226,7 +205,7 @@ BEGIN
     FROM backup_logs
     WHERE backup_end > NOW() - INTERVAL '24 hours';
 
-    -- Check system logs for errors
+
     RETURN QUERY
     SELECT
         'System Errors'::VARCHAR,
@@ -237,10 +216,6 @@ BEGIN
     WHERE log_level = 'ERROR' AND timestamp > NOW() - INTERVAL '24 hours';
 END;
 $$ LANGUAGE plpgsql;
-
--- ============================================================================
--- PG Trigger Functions
--- ============================================================================
 
 CREATE OR REPLACE FUNCTION fn_update_timestamp()
 RETURNS TRIGGER AS $$
@@ -280,10 +255,6 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
--- ============================================================================
--- Create Triggers
--- ============================================================================
 
 CREATE TRIGGER trg_audit_logs_update
 BEFORE UPDATE ON audit_logs

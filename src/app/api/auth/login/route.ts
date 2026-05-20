@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Fetch user from database
+
     const userQuery = `SELECT * FROM users WHERE email = ? AND status = 'active'`;
     const userResults = await executeQuery(userQuery, [email]);
 
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     const user = userResults[0];
 
-    // Compare passwords using bcrypt
+
     const isValidPassword = await comparePasswords(password, user.password_hash);
 
     if (!isValidPassword) {
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Update last login time
+
     await executeQuery('UPDATE users SET last_login = NOW() WHERE user_id = ?', [user.user_id]);
 
     const token = generateToken({

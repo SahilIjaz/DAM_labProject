@@ -9,18 +9,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Only allow faculty members (role_id 4, 5, 6)
+
     if (![4, 5, 6].includes(user.role_id)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Get faculty member's department
+
     const faculty = await getFacultyByUserId(user.user_id);
     if (!faculty) {
       return NextResponse.json({ error: 'Faculty record not found' }, { status: 404 });
     }
 
-    // Fetch dashboard data for the faculty's department
+
     const dashboardData = await getFacultyDashboardData(faculty.department_id);
 
     return NextResponse.json({

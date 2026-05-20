@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create faculty record if role is faculty (4, 5, 6)
+
     if ([4, 5, 6].includes(finalRoleId) && departmentId) {
       try {
         await executeQuery(
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
         );
       } catch (facultyError: any) {
         console.warn('Failed to create faculty record:', facultyError.message);
-        // Don't fail registration if faculty record creation fails
+
       }
     }
 

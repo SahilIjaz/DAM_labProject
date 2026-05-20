@@ -26,7 +26,7 @@ export async function getAttendanceReport(studentId: number) {
 
 export async function getClassAttendance(courseId: number, semester: number) {
   const query = `
-    SELECT u.first_name, u.last_name, 
+    SELECT u.first_name, u.last_name,
            COUNT(a.attendance_id) as attended,
            COUNT(DISTINCT a.attendance_date) as total_days
     FROM enrollments e

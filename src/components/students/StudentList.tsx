@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Student } from '@/lib/types';
 
-
 interface StudentListProps {
   onStudentSelect?: (student: Student) => void;
   departmentId?: number;

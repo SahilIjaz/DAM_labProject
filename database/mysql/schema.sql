@@ -1,16 +1,9 @@
--- Distributed University Management System - MySQL Schema
--- Primary Database: university_main
--- Server: Lahore (Master)
+
 
 DROP DATABASE IF EXISTS university_main;
 CREATE DATABASE university_main CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE university_main;
 
--- ============================================================================
--- CORE TABLES FOR TRANSACTIONAL DATA
--- ============================================================================
-
--- ROLES Table
 CREATE TABLE IF NOT EXISTS roles (
   role_id INT PRIMARY KEY AUTO_INCREMENT,
   role_name VARCHAR(100) UNIQUE NOT NULL,
@@ -18,7 +11,6 @@ CREATE TABLE IF NOT EXISTS roles (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- PERMISSIONS Table
 CREATE TABLE IF NOT EXISTS permissions (
   permission_id INT PRIMARY KEY AUTO_INCREMENT,
   permission_name VARCHAR(100) UNIQUE NOT NULL,
@@ -28,7 +20,6 @@ CREATE TABLE IF NOT EXISTS permissions (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- ROLE_PERMISSIONS Junction Table
 CREATE TABLE IF NOT EXISTS role_permissions (
   role_id INT NOT NULL,
   permission_id INT NOT NULL,
@@ -37,7 +28,6 @@ CREATE TABLE IF NOT EXISTS role_permissions (
   FOREIGN KEY (permission_id) REFERENCES permissions(permission_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- CAMPUSES Table
 CREATE TABLE IF NOT EXISTS campuses (
   campus_id INT PRIMARY KEY AUTO_INCREMENT,
   campus_name VARCHAR(150) UNIQUE NOT NULL,
@@ -50,7 +40,6 @@ CREATE TABLE IF NOT EXISTS campuses (
   INDEX idx_city (city)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- DEPARTMENTS Table
 CREATE TABLE IF NOT EXISTS departments (
   department_id INT PRIMARY KEY AUTO_INCREMENT,
   dept_name VARCHAR(150) UNIQUE NOT NULL,
@@ -63,7 +52,6 @@ CREATE TABLE IF NOT EXISTS departments (
   INDEX idx_campus_id (campus_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- USERS Table
 CREATE TABLE IF NOT EXISTS users (
   user_id INT PRIMARY KEY AUTO_INCREMENT,
   username VARCHAR(255) UNIQUE NOT NULL,
@@ -86,11 +74,9 @@ CREATE TABLE IF NOT EXISTS users (
   INDEX idx_department_id (department_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Update departments head_of_dept foreign key
 ALTER TABLE departments
   ADD FOREIGN KEY (head_of_dept) REFERENCES users(user_id) ON DELETE SET NULL;
 
--- STUDENTS Table
 CREATE TABLE IF NOT EXISTS students (
   student_id INT PRIMARY KEY AUTO_INCREMENT,
   enrollment_id VARCHAR(50) UNIQUE,
@@ -109,7 +95,6 @@ CREATE TABLE IF NOT EXISTS students (
   INDEX idx_department_id (department_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- FACULTY Table
 CREATE TABLE IF NOT EXISTS faculty (
   faculty_id INT PRIMARY KEY AUTO_INCREMENT,
   faculty_code VARCHAR(50) UNIQUE,
@@ -127,7 +112,6 @@ CREATE TABLE IF NOT EXISTS faculty (
   INDEX idx_department_id (department_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- COURSES Table
 CREATE TABLE IF NOT EXISTS courses (
   course_id INT PRIMARY KEY AUTO_INCREMENT,
   course_code VARCHAR(20) UNIQUE NOT NULL,
@@ -146,7 +130,6 @@ CREATE TABLE IF NOT EXISTS courses (
   INDEX idx_faculty_id (faculty_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- ENROLLMENTS Table
 CREATE TABLE IF NOT EXISTS enrollments (
   enrollment_id INT PRIMARY KEY AUTO_INCREMENT,
   student_id INT NOT NULL,
@@ -164,7 +147,6 @@ CREATE TABLE IF NOT EXISTS enrollments (
   INDEX idx_course_id (course_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- EXAM_RESULTS Table
 CREATE TABLE IF NOT EXISTS exam_results (
   result_id INT PRIMARY KEY AUTO_INCREMENT,
   enrollment_id INT NOT NULL,
@@ -180,7 +162,6 @@ CREATE TABLE IF NOT EXISTS exam_results (
   INDEX idx_exam_type (exam_type)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- ID Sequences Table for generating sequential IDs
 CREATE TABLE IF NOT EXISTS id_sequences (
   sequence_name VARCHAR(100) PRIMARY KEY,
   current_value INT DEFAULT 0,
@@ -193,7 +174,6 @@ INSERT INTO id_sequences VALUES
 ('student_seq', 0, 'BULC_IT_F21_', '', 1),
 ('faculty_seq', 0, 'FAC_', '', 1);
 
--- Audit Logs Table (Temporary, synced to PostgreSQL)
 CREATE TABLE IF NOT EXISTS audit_logs_temp (
   log_id INT PRIMARY KEY AUTO_INCREMENT,
   user_id INT,
@@ -211,11 +191,6 @@ CREATE TABLE IF NOT EXISTS audit_logs_temp (
   INDEX idx_action (action)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- ============================================================================
--- INSERT DEFAULT DATA
--- ============================================================================
-
--- Insert Roles
 INSERT IGNORE INTO roles (role_id, role_name, description) VALUES
 (1, 'Super Admin', 'Full system access'),
 (2, 'Database Administrator', 'Database management'),
@@ -228,7 +203,6 @@ INSERT IGNORE INTO roles (role_id, role_name, description) VALUES
 (9, 'Data Entry Operator', 'Data entry'),
 (10, 'Guest', 'Read-only');
 
--- Insert Permissions
 INSERT IGNORE INTO permissions (permission_id, permission_name, resource, action, description) VALUES
 (1, 'users_create', 'users', 'create', 'Create users'),
 (2, 'users_read', 'users', 'read', 'Read users'),
@@ -249,13 +223,11 @@ INSERT IGNORE INTO permissions (permission_id, permission_name, resource, action
 (17, 'admin_access', 'admin', 'manage', 'Admin panel access'),
 (18, 'backup_manage', 'backup', 'manage', 'Manage backups');
 
--- Insert Campuses
 INSERT IGNORE INTO campuses (campus_id, campus_name, location, city, country, server_ip, replication_type) VALUES
 (1, 'Main Campus - Lahore', '123 University Road', 'Lahore', 'Pakistan', '192.168.1.10', 'master'),
 (2, 'Islamabad Campus', '456 Education Street', 'Islamabad', 'Pakistan', '192.168.1.20', 'slave'),
 (3, 'Karachi Campus', '789 College Avenue', 'Karachi', 'Pakistan', '192.168.1.30', 'slave');
 
--- Insert Departments
 INSERT IGNORE INTO departments (department_id, dept_name, dept_code, campus_id, budget, created_at) VALUES
 (1, 'Computer Science', 'CS', 1, 500000.00, NOW()),
 (2, 'Business Administration', 'BA', 1, 400000.00, NOW()),

@@ -83,7 +83,7 @@ export default function AnalyticsPage() {
           </div>
         )}
 
-        {/* System Health */}
+        {}
         {data?.systemStats && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>System Health</h2>
@@ -108,7 +108,7 @@ export default function AnalyticsPage() {
           </div>
         )}
 
-        {/* Course Enrollment */}
+        {}
         {data?.courseEnrollment && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>Course Enrollment</h2>
@@ -147,7 +147,7 @@ export default function AnalyticsPage() {
           </div>
         )}
 
-        {/* API Performance */}
+        {}
         {data?.apiMetrics && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>API Performance Metrics</h2>
@@ -180,7 +180,7 @@ export default function AnalyticsPage() {
           </div>
         )}
 
-        {/* Student Performance Sample */}
+        {}
         {data?.studentPerformance && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>Student Performance Sample</h2>
@@ -211,7 +211,7 @@ export default function AnalyticsPage() {
           </div>
         )}
 
-        {/* Faculty Workload */}
+        {}
         {data?.facultyWorkload && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>Faculty Workload</h2>

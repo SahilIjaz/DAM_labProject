@@ -1,10 +1,7 @@
--- Triggers for University Management System - MySQL
+
 
 USE university_main;
 
--- ============================================================================
--- TRG1: Audit Student Inserts
--- ============================================================================
 DELIMITER $$
 CREATE TRIGGER IF NOT EXISTS trg_student_insert
 AFTER INSERT ON students FOR EACH ROW
@@ -17,9 +14,6 @@ BEGIN
 END$$
 DELIMITER ;
 
--- ============================================================================
--- TRG2: Audit Exam Results Updates
--- ============================================================================
 DELIMITER $$
 CREATE TRIGGER IF NOT EXISTS trg_exam_result_update
 AFTER UPDATE ON exam_results FOR EACH ROW
@@ -36,9 +30,6 @@ BEGIN
 END$$
 DELIMITER ;
 
--- ============================================================================
--- TRG3: Audit Course Deletions
--- ============================================================================
 DELIMITER $$
 CREATE TRIGGER IF NOT EXISTS trg_course_delete
 BEFORE DELETE ON courses FOR EACH ROW
@@ -52,9 +43,6 @@ BEGIN
 END$$
 DELIMITER ;
 
--- ============================================================================
--- TRG4: Update Enrollment Status on Course Completion
--- ============================================================================
 DELIMITER $$
 CREATE TRIGGER IF NOT EXISTS trg_enrollment_completion
 AFTER UPDATE ON enrollments FOR EACH ROW
@@ -67,9 +55,6 @@ BEGIN
 END$$
 DELIMITER ;
 
--- ============================================================================
--- TRG5: Prevent Over-enrollment
--- ============================================================================
 DELIMITER $$
 CREATE TRIGGER IF NOT EXISTS trg_prevent_over_enrollment
 BEFORE INSERT ON enrollments FOR EACH ROW
@@ -87,9 +72,6 @@ BEGIN
 END$$
 DELIMITER ;
 
--- ============================================================================
--- TRG6: Auto-update User timestamp
--- ============================================================================
 DELIMITER $$
 CREATE TRIGGER IF NOT EXISTS trg_user_update_timestamp
 BEFORE UPDATE ON users FOR EACH ROW
@@ -98,9 +80,6 @@ BEGIN
 END$$
 DELIMITER ;
 
--- ============================================================================
--- TRG7: Auto-update Students timestamp
--- ============================================================================
 DELIMITER $$
 CREATE TRIGGER IF NOT EXISTS trg_student_update_timestamp
 BEFORE UPDATE ON students FOR EACH ROW
@@ -109,9 +88,6 @@ BEGIN
 END$$
 DELIMITER ;
 
--- ============================================================================
--- TRG8: Audit User Status Changes
--- ============================================================================
 DELIMITER $$
 CREATE TRIGGER IF NOT EXISTS trg_user_status_change
 AFTER UPDATE ON users FOR EACH ROW

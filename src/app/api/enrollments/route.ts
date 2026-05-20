@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       [decoded.user_id]
     );
 
-    // Use student_id if exists, otherwise use user_id directly
+
     const studentId = studentResults.length > 0
       ? (studentResults[0] as any).student_id
       : decoded.user_id;

@@ -19,7 +19,7 @@ export async function updateStudentGrade(enrollmentId: number, grade: string) {
 
 export async function getClassGrades(courseId: number, semester: number) {
   const query = `
-    SELECT e.enrollment_id, s.enrollment_id as student_enrollment_id, 
+    SELECT e.enrollment_id, s.enrollment_id as student_enrollment_id,
            u.first_name, u.last_name, e.grade, er.percentage
     FROM enrollments e
     JOIN students s ON e.student_id = s.student_id

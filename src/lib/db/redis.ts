@@ -17,7 +17,7 @@ client.on('connect', () => console.log('Redis Connected'));
 export async function cacheGet(key: string): Promise<string | null> {
   try {
     if (!client.isOpen) {
-      return null; // Redis not connected, return null
+      return null;
     }
     return await client.get(key);
   } catch (error) {
@@ -33,7 +33,7 @@ export async function cacheSet(
 ): Promise<void> {
   try {
     if (!client.isOpen) {
-      return; // Redis not connected, skip caching
+      return;
     }
     await client.setEx(key, ttl, value);
   } catch (error) {
@@ -83,7 +83,6 @@ export async function cacheSetJSON<T>(
   }
 }
 
-// Connect to Redis without blocking (fire and forget)
 client.connect().catch((error) => {
   console.error('Redis connection error:', error);
 });
@@ -95,5 +94,4 @@ export async function closeClient(): Promise<void> {
 }
 
 export { client };
-
 

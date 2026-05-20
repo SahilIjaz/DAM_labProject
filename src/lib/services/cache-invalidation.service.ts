@@ -34,10 +34,10 @@ class CacheInvalidationService {
     this.isRunning = true;
     console.log('Starting cache invalidation service...');
 
-    // Start polling for cache invalidation events
-    this.pollInterval = setInterval(() => this.processInvalidationQueue(), 1000); // Poll every 1 second
 
-    // Process any pending events on startup
+    this.pollInterval = setInterval(() => this.processInvalidationQueue(), 1000);
+
+
     await this.processInvalidationQueue();
   }
 
@@ -72,12 +72,12 @@ class CacheInvalidationService {
         return;
       }
 
-      // Process each event
+
       for (const event of rows) {
         try {
           await this.handleInvalidationEvent(event);
 
-          // Mark as processed
+
           await connection.execute(
             `UPDATE cache_invalidation_queue
              SET processed = TRUE, processed_at = NOW()
@@ -103,10 +103,10 @@ class CacheInvalidationService {
     );
 
     if (event_type === 'delete') {
-      // Direct delete of specific key
+
       await cacheDelete(cache_key);
     } else if (event_type === 'invalidate') {
-      // Pattern-based invalidation (e.g., "users:*")
+
       await cacheClear(cache_key);
     }
   }

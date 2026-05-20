@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { executeQuery } from '@/lib/db/mysql';
 
-// This endpoint should only be used during setup/initialization
 export async function POST(request: NextRequest) {
   try {
-    // Create exams table
+
     const createTableQuery = `
       CREATE TABLE IF NOT EXISTS exams (
         exam_id INT AUTO_INCREMENT PRIMARY KEY,

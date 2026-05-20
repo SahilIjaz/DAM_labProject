@@ -24,7 +24,7 @@ export const SettingsPanel: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load settings from localStorage
+
     const savedSettings = localStorage.getItem('userSettings');
     if (savedSettings) {
       setSettings(JSON.parse(savedSettings));
@@ -48,7 +48,7 @@ export const SettingsPanel: React.FC = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Save to localStorage
+
       localStorage.setItem('userSettings', JSON.stringify(settings));
       setMessage('Settings saved successfully');
       setTimeout(() => setMessage(null), 3000);

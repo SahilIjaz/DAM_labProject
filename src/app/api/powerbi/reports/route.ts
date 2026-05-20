@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: true, report: 'attendance-analysis', data });
     }
 
-    // Default summary report
+
     const summaryQuery = `
       SELECT
         'total_students' as metric,
